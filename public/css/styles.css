@@ -8,20 +8,22 @@ html, body {
 #app {height: 100%;}
 
 
-#notebooks { max-width: 250px; background-color: #efefef; padding: 5px; min-height: 100%; border-right: 1px solid lightgray;}
+#notebooks { /*max-width: 250px;*/ background-color: #efefef; padding: 5px; min-height: 100%; border-right: 1px solid lightgray;}
 #snippets{ min-height:100%; border-right: 1px solid lightgray;}
 #note {min-height:100%; }
 
-#notebooks .header {height: 100px;}
+#notebooks .header {height: 100px; position:relative;}
 #notebooks .header img { position: absolute; top: 10px; left: 0px;}
 #notebooks .header h1 { margin-left: 100px; float: left;}
 #notebooks .list-group-item.selected {font-weight: bold;}
 
 #snippets .header {height: 50px; border-bottom: 1px solid lightgray;}
+#snippets .snippet {border-bottom: 1px solid lightgray;}
 
 #note .header {height: 50px; border-bottom: 1px solid lightgray;}
+#note .header .cmds {float: right;}
+#note .content {padding: 5px;}
 
-.header {position: relative; }
 
 .user {margin-bottom: 50px;}
 
@@ -34,3 +36,5 @@ html, body {
 .list-group-item:hover {background-color: #e3ecf0; cursor: pointer;}
 
 .btn-xs{ padding: 1px 5px !important; font-size: 12px !important; line-height: 1.5 !important; border-radius: 3px !important; }
+
+.icon {font-size:22px; cursor:pointer;}

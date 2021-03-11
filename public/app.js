@@ -1,6 +1,12 @@
 // tutorial: firebase basics
 // https://www.youtube.com/watch?v=q5J5ho7YUhA&ab_channel=Fireship
 
+const db = firebase.firestore();
+
+let dbNotesRef = db.collection('notes');
+//let unsubscribe;
+
+
 // User Authentication
 const auth = firebase.auth();
 
@@ -14,14 +20,14 @@ const userDetails = document.getElementById('userDetails');
 
 
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-
+let self;
 
 var vm = new Vue({
     // components:{
     //   'movie-list': cMovieList
     // },
     created: function(){
-      var self = this; // preserve this scope for async functions
+      self = this; // preserve this scope for async functions
       console.log("vue created");
     },
     data: {
@@ -30,7 +36,11 @@ var vm = new Vue({
           notes: [],
           currentNote: null,
           currentSnippet: null,
-          notesUsubscribe: null
+          currentSnippetInEditor: null, // for edit mode, leave original intact in case cancelling edit
+          notesUsubscribe: null,
+      },
+      state:{
+        editingSnippet: false
       }
     },
     computed:{
@@ -41,6 +51,34 @@ var vm = new Vue({
         },
         selectSnippet: function(snippet){
             this.model.currentSnippet = snippet;
+        },
+        editSnippet: function(snippet){
+            if (!snippet){
+                // cancel
+                this.state.editingSnippet = false;
+                this.model.currentSnippetInEditor = null;
+            } else {
+                // edit
+                this.state.editingSnippet = true;
+                this.model.currentSnippetInEditor = _.cloneDeep(snippet);
+            }
+        },
+        saveSnippet: function(){
+            console.log('save', this.model.currentSnippetInEditor.content);
+            this.model.currentSnippet = _.cloneDeep(this.model.currentSnippetInEditor);
+            
+            var docRef = dbNotesRef.doc(this.model.currentSnippet.id);
+            // update = update, set = insert. set will overwrite whole object if exists
+            docRef.update({
+                content: this.model.currentSnippet.content
+            })
+            .then(function() {
+                console.log("Document successfully updated!");
+                self.editSnippet(null);
+            })
+            .catch((error) => {
+                console.error("Error updating document: ", error);
+            });
         },
         onAuthStateChanged: function(user){
           console.log('onAuthStateChanged', user)  
@@ -56,7 +94,7 @@ var vm = new Vue({
             console.log('loadNotes');
             // https://firebase.google.com/docs/firestore/query-data/get-data
             // Database Reference
-            collNotes = db.collection('notes')
+            collNotes = dbNotesRef
             .where('uid', '==', user.uid)
             //.where('parent', '!=', null )
             .get()
@@ -88,12 +126,12 @@ var vm = new Vue({
 
 
 ///// Firestore /////
-const db = firebase.firestore();
-const createThing = document.getElementById('createThing');
-const thingsList = document.getElementById('thingsList');
+// const db = firebase.firestore();
+// const createThing = document.getElementById('createThing');
+// const thingsList = document.getElementById('thingsList');
 
-let collNotes;
-let unsubscribe;
+// let collNotes;
+// let unsubscribe;
 
 auth.onAuthStateChanged(user => vm.onAuthStateChanged(user));
 /*

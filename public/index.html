@@ -21,9 +21,11 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 
     <script src="scripts/arrayToTree.js"></script>
+    <script src="scripts/lodash.min.js" defer></script>
     <script src="app.js" defer></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/fontello.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -59,22 +61,55 @@
                 </div>
 
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item" v-for="snippet in model.currentNote?.children" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
+                    <li class="list-group-item snippet" v-for="snippet in model.currentNote?.children" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
                 </ul>
                 <div v-if="!model.currentNote || model.currentNote.children.length == 0" style="opacity:0.2;text-align: center;">
                     <img src="images/noapple.JPG" width="50" alt="no records">
                 </div>
             </div>
 
-            <div class="col" id="note">
+            <div class="col-lg-6" id="note">
                 <div class="header">
-                    <template v-if="model.currentSnippet">{{model.currentSnippet.title}}</template>
+                    <template v-if="model.currentSnippet">{{model.currentSnippet.title}}
+
+                        <div v-if="state.editingSnippet" class="cmds">
+                            <button class="btn btn-light" @click="editSnippet()" >Cancel</button>
+                            <button class="btn btn-primary" @click="saveSnippet()">Save</button>
+                        </div>
+                        <div v-else class="cmds">
+                            <span class="icon" @click="editSnippet(model.currentSnippet)"><i class="icon-edit" alt="Edit" title="Edit"></i></span>
+                            <span class="icon" ><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
+                            <span class="icon" ><i class="icon-trash-empty" alt="Delete" title="Delete"></i></span>
+                        </div>
+                    </template>
+                    
+                </div>
+                <div class="content" v-if="model.currentSnippet">
+                    <template v-if="state.editingSnippet">
+                        <textarea v-model="model.currentSnippetInEditor.content" style="width: 99%;">{{model.currentSnippetInEditor.content}}</textarea>
+                    </template>
+                    <template v-else>
+                        {{model.currentSnippet.content}}
+                    </template>
                 </div>
             </div>
 
         </div>
     </div>
-
+    <div class="row">
+		<i class="icon-edit"></i>
+		<i class="icon-star-empty"></i>
+		<i class="icon-star"></i>
+		<i class="icon-lock"></i>
+		<i class="icon-lock-open"></i>
+		<i class="icon-link"></i>
+		<i class="icon-cancel"></i>
+		<i class="icon-link-ext"></i>
+		<i class="icon-docs"></i>
+		<i class="icon-sort"></i>
+		<i class="icon-paste"></i>
+		<i class="icon-share"></i>
+      </div>
 
     <div class="clear"></div>
 
