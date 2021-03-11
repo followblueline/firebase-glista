@@ -10,13 +10,21 @@ html, body {
 
 #notebooks { float:left; width: 250px; background-color: #efefef; padding: 5px; min-height: 100%; border-right: 1px solid lightgray;}
 #snippets{ float:left; width: 250px; min-height:100%; border-right: 1px solid lightgray;}
-#note { float: left; padding: 5px;}
+#note {margin-left: 500px; margin-left: 500px;}
+@media screen and (max-width: 991px) {
+    #note {margin-left: 0; clear: both;}
+}
 
-.header {position: relative; }
 #notebooks .header {height: 100px;}
 #notebooks .header img { position: absolute; top: 10px; left: 0px;}
 #notebooks .header h1 { margin-left: 100px; float: left;}
 #notebooks .list-group-item.selected {font-weight: bold;}
+
+#snippets .header {height: 50px; border-bottom: 1px solid lightgray;}
+
+#note .header {height: 50px; border-bottom: 1px solid lightgray;}
+
+.header {position: relative; }
 
 .user {margin-bottom: 50px;}
 
@@ -27,3 +35,10 @@ html, body {
 }
 
 .list-group-item:hover {background-color: #e3ecf0; cursor: pointer;}
+
+.btn-xs{ padding: 1px 5px !important; font-size: 12px !important; line-height: 1.5 !important; border-radius: 3px !important; }
+
+.banana{display:flex; flex-flow: row wrap; justify-content: flex-end;}
+.banana .first {flex:2; min-width: 250px; max-width: 300px; background-color: maroon;}
+.banana .second {flex: 3; min-width: 300px; max-width: 350px; background-color: lime;}
+.banana .third {flex: 6;background-color: lightpink;}

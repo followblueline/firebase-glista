@@ -29,6 +29,7 @@ var vm = new Vue({
           user: null,
           notes: [],
           currentNote: null,
+          currentSnippet: null,
           notesUsubscribe: null
       }
     },
@@ -37,6 +38,9 @@ var vm = new Vue({
     methods:{
         selectNotebook: function(note){
             this.model.currentNote = note;
+        },
+        selectSnippet: function(snippet){
+            this.model.currentSnippet = snippet;
         },
         onAuthStateChanged: function(user){
           console.log('onAuthStateChanged', user)  
