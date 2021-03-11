@@ -1,0 +1,12 @@
+
+#notebooks { float:left; width: 250px; background-color: #efefef; padding: 5px;}
+
+#snippets{ float:left; width: 250px; padding: 5px;}
+
+#note { float: left; padding: 5px;}
+
+#header {position: relative; }
+#header img { position: absolute; top: 10px; left: 5px;}
+#header h1 { margin-left: 100px; float: left;}
+
+.clear {clear: both;}
