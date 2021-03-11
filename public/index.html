@@ -27,79 +27,52 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container-fluid banana">
-        <div class="first">first</div>
-        <div class="second">second<br>sffgdf<br>brf</div>
-        <div class="third">third</div>
-    </div>
-    <div class="container-fluid">
-        <div class="row row-no-gutters">
-            <div class="col-lg-3" style="background-color:lavender; max-width:250px">.col-lg-4</div>
-            <div class="col-lg-3" style="background-color:lightsalmon;">.col-lg-4</div>
-            <div class="col" style="background-color:lavenderblush;">.col-lg-8</div>
-        </div>
-        <br>
-        <div class="row row-no-gutters">
-            <div class="col-lg-3" style="background-color:lavender;">.col-lg-4</div>
-            <div class="col-lg-3" style="background-color:lightsalmon;">.col-lg-4</div>
-            <div class="col-lg-6" style="background-color:lavenderblush;">.col-lg-8</div>
-        </div>
-<br>
-        <div class="row row-no-gutters">
-            <div class="col-md-3" style="background-color:lavender;">.col-md-4</div>
-            <div class="col-md-3" style="background-color:lightsalmon;">.col-md-4</div>
-            <div class="col-md-6" style="background-color:lavenderblush;">.col-md-8</div>
-        </div>
-          <br>
-          <p>And here's a row with gutters to demonstrate the differences:</p>
-          <div class="row">
-            <div class="col-sm-4" style="background-color:lavender;">.col-sm-4</div>
-            <div class="col-sm-8" style="background-color:lavenderblush;">.col-sm-8</div>
-          </div>
-    </div>
-    <div id="app" class="container-fluid">
 
-        <div id="notebooks">
-            <div class="header">
-                <img src="images/glista.png" width="64px" alt="Glista">
-                <h1>Glista</h1>
+    <div id="app" class="_container-fluid">
+        <div class="row no-gutters" style="min-height:100%;">
+
+            <div class="col-lg-3" id="notebooks">
+                <div class="header">
+                    <img src="images/glista.png" width="64px" alt="Glista">
+                    <h1>Glista</h1>
+                </div>
+                <div class="clear"></div>
+                <div class="user">
+                    <p v-if="model.user">{{model.user.displayName}}</p>
+                    <p v-if="model.user" class="small">{{model.user.uid}}</p>
+                    <button v-if="model.user" @click="onSignOut" class="btn btn-light">Sign Out</button>
+                    <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-light">Google Sign In</button>
+                </div>
+
+                <div class="clear"></div>
+
+
+                <ul class="list-group list-group-flush">
+                    <li :class="['list-group-item', {selected: note.id == model.currentNote?.id}]" 
+                    v-for="note in model.notes" @click="selectNotebook(note)">{{ note.title }}</li>
+                </ul>
             </div>
-            <div class="clear"></div>
-            <div class="user">
-                <p v-if="model.user">{{model.user.displayName}}</p>
-                <p v-if="model.user" class="small">{{model.user.uid}}</p>
-                <button v-if="model.user" @click="onSignOut" class="btn btn-light">Sign Out</button>
-                <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-light">Google Sign In</button>
+            
+            <div class="col-lg-3" id="snippets">
+                <div class="header">Snippets
+                    <button class="btn btn-primary btn-xs">Create snippet</button>
+                </div>
+
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" v-for="snippet in model.currentNote?.children" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
+                </ul>
+                <div v-if="!model.currentNote || model.currentNote.children.length == 0" style="opacity:0.2;text-align: center;">
+                    <img src="images/noapple.JPG" width="50" alt="no records">
+                </div>
             </div>
 
-            <div class="clear"></div>
-
-
-            <ul class="list-group list-group-flush">
-                <li :class="['list-group-item', {selected: note.id == model.currentNote?.id}]" 
-                v-for="note in model.notes" @click="selectNotebook(note)">{{ note.title }}</li>
-            </ul>
-        </div>
-        
-        <div id="snippets">
-            <div class="header">Snippets
-                <button class="btn btn-primary btn-xs">Create snippet</button>
+            <div class="col" id="note">
+                <div class="header">
+                    <template v-if="model.currentSnippet">{{model.currentSnippet.title}}</template>
+                </div>
             </div>
 
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item" v-for="snippet in model.currentNote?.children" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
-            </ul>
-            <div v-if="!model.currentNote || model.currentNote.children.length == 0" style="opacity:0.2;text-align: center;">
-                <img src="images/noapple.JPG" width="50" alt="no records">
-            </div>
         </div>
-
-        <div id="note">
-            <div class="header">
-                <template v-if="model.currentSnippet">{{model.currentSnippet.title}}</template>
-            </div>
-        </div>
-
     </div>
 
 
