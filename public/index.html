@@ -20,6 +20,7 @@
     <!-- Vue -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 
+    <script src="scripts/arrayToTree.js"></script>
     <script src="app.js" defer></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -29,44 +30,40 @@
     <div id="app" class="container-fluid">
 
         <section id="notebooks">
-            <div id="header">
+            <div class="header">
                 <img src="images/glista.png" width="64px" alt="Glista">
                 <h1>Glista</h1>
             </div>
+            <div class="clear"></div>
+            <div class="user">
+                <p v-if="model.user">{{model.user.displayName}}</p>
+                <p v-if="model.user" class="small">{{model.user.uid}}</p>
+                <button v-if="model.user" @click="onSignOut" class="btn btn-light">Sign Out</button>
+                <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-light">Google Sign In</button>
+            </div>
+
+            <div class="clear"></div>
+
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Add new</li>
+                <li :class="['list-group-item', {selected: note.id == model?.currentNote?.id}]" 
+                v-for="note in model.notes" @click="selectNotebook(note)">{{ note.title }}</li>
+            </ul>
         </section>
-        <section id="snippets">Snippets</section>
+        
+        <section id="snippets">
+            <div class="header">Snippets</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Add new</li>
+                <li class="list-group-item" v-for="snippet in model?.currentNote?.children" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
+            </ul>
+        </section>
+
         <section id="note">note</section>
 
     </div>
     <div class="clear"></div>
-    
 
-    <section id="whenSignedOut">
-
-        <button id="signInBtn" class="btn btn-primary">Sign in with Google</button>
-    
-      </section>
-    
-      <section id="whenSignedIn" hidden="true">
-    
-        <div id="userDetails"></div>
-    
-        <button id="signOutBtn" class="btn btn-primary">Sign Out</button>
-    
-      </section>
-    
-      <hr>
-    
-      <section>
-    
-        <h2>My Firestore Things</h2>
-    
-        <ul id="thingsList">
-    
-        </ul>
-    
-        <button id="createThing" class="btn btn-success">Create Random Thing</button>
-    
-      </section>
 </body>
 </html>

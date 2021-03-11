@@ -1,12 +1,29 @@
+@media screen and (min-width: 991px) {
+html, body {
+    height: 100%;
+    box-sizing: border-box;
+  }
 
-#notebooks { float:left; width: 250px; background-color: #efefef; padding: 5px;}
+}
+#app {height: 100%;}
 
-#snippets{ float:left; width: 250px; padding: 5px;}
 
+#notebooks { float:left; width: 250px; background-color: #efefef; padding: 5px; min-height: 100%; border-right: 1px solid lightgray;}
+#snippets{ float:left; width: 250px; min-height:100%; border-right: 1px solid lightgray;}
 #note { float: left; padding: 5px;}
 
-#header {position: relative; }
-#header img { position: absolute; top: 10px; left: 5px;}
-#header h1 { margin-left: 100px; float: left;}
+.header {position: relative; }
+#notebooks .header {height: 100px;}
+#notebooks .header img { position: absolute; top: 10px; left: 0px;}
+#notebooks .header h1 { margin-left: 100px; float: left;}
+#notebooks .list-group-item.selected {font-weight: bold;}
+
+.user {margin-bottom: 50px;}
 
 .clear {clear: both;}
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.list-group-item:hover {background-color: #e3ecf0; cursor: pointer;}
