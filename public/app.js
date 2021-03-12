@@ -45,7 +45,7 @@ var vm = new Vue({
                 id: null,
                 children: [],
                 parent: self.model.currentNote.id,
-                title: 'New snippet',
+                title: '',
                 description: '',
                 tags: []
             };
@@ -80,6 +80,7 @@ var vm = new Vue({
                     snippet
                 )
                 .then(function(docRef) {
+                    snippet.id = docRef.id;
                     self.onSnippetSave(null, snippet, "Document successfully added")
                 })
                 .catch(function(error) {
@@ -118,9 +119,12 @@ var vm = new Vue({
             // TODO: if adding more sublevels, delete all children
             if (confirm(`Delete ${snippet.title}?`)){
                 dbNotesRef.doc(snippet.id)
-                .delete({uid: self.model.user.uid})
+                .delete()
                 .then(() => {
                     console.log("Document successfully deleted!");
+                    // osvjezi UI
+                    _.remove(self.model.currentNote.children, function(x) { return x.id == snippet.id});
+                    self.$forceUpdate();
                 }).catch((error) => {
                     console.error("Error removing document: ", error);
                 });
