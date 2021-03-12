@@ -63,14 +63,19 @@ var vm = new Vue({
                 this.model.currentSnippetInEditor = _.cloneDeep(snippet); // edit
             }
         },
+        validateSnippet: function(snippet){
+            // real validation goes here
+            if (snippet.title.length == 0) return false;
+            return true;
+        },
         saveSnippet: function(){
-            //this.model.currentSnippet = _.cloneDeep(this.model.currentSnippetInEditor);
             var snippet = this.model.currentSnippetInEditor;
+            if (!this.validateSnippet(snippet)) return;
+
             // remove our metadata
             delete snippet.children;
             if (!snippet.id){
                 // insert. set will overwrite whole object if exists
-                //delete snippet.id;
                 dbNotesRef.add(
                     snippet
                 )
@@ -86,8 +91,8 @@ var vm = new Vue({
                 // update = update, set = insert. set will overwrite whole object if exists
                 docRef.update({
                     title: snippet.title,
-                    description: snippet.description,
-                    content: snippet.content
+                    description: snippet.description || '',
+                    content: snippet.content || ''
                 })
                 .then(function() {
                     self.onSnippetSave(null, snippet, "Document successfully updated!")
