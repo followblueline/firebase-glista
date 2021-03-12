@@ -44,6 +44,7 @@
                     <p v-if="model.user" class="small">{{model.user.uid}}</p>
                     <button v-if="model.user" @click="onSignOut" class="btn btn-light">Sign Out</button>
                     <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-light">Google Sign In</button>
+                    <button v-if="!model.user" @click="onEmailPassSignIn" class="btn btn-light">Email/pass Sign In</button>
                 </div>
                 <div class="clear"></div>
 
@@ -90,7 +91,7 @@
                                 <div class="cmds">
                                     <span class="icon" @click="editSnippet(model.currentSnippet)"><i class="icon-edit" alt="Edit" title="Edit"></i></span>
                                     <span class="icon" ><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
-                                    <span class="icon" ><i class="icon-trash-empty" alt="Delete" title="Delete"></i></span>
+                                    <span class="icon" @click="deleteSnippet(model.currentSnippet)"><i class="icon-trash-empty" alt="Delete" title="Delete"></i></span>
                                 </div>
                             </template>
                         </template>

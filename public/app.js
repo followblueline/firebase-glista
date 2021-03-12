@@ -113,6 +113,19 @@ var vm = new Vue({
                 this.editSnippet(null);
             }
         },
+        deleteSnippet: function(snippet){
+            // Warning: Deleting a document does not delete its subcollections!
+            // TODO: if adding more sublevels, delete all children
+            if (confirm(`Delete ${snippet.title}?`)){
+                dbNotesRef.doc(snippet.id)
+                .delete({uid: self.model.user.uid})
+                .then(() => {
+                    console.log("Document successfully deleted!");
+                }).catch((error) => {
+                    console.error("Error removing document: ", error);
+                });
+            }
+        },
         onAuthStateChanged: function(user){
           console.log('onAuthStateChanged', user)  
           if (user){
@@ -152,6 +165,19 @@ var vm = new Vue({
         },
         onGoogleSignIn: function(){
             auth.signInWithPopup(googleAuthProvider);
+        },
+        onEmailPassSignIn: function(){
+            let email = 'vrtnipanj@gmail.com';
+            let password = 'banana123';
+            auth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+            // Signed in
+                var user = userCredential.user;
+                console.log('signed in', user, userCredential);
+            })
+            .catch((error) => {
+                console.log('SignIn error', error);
+            });
         }
     },
   }).$mount("#app");
