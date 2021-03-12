@@ -30,7 +30,7 @@
 </head>
 <body>
 
-    <div id="app" class="_container-fluid">
+    <div id="app" class="container-fluid pl-0 pr-0">
         <div class="row no-gutters" style="min-height:100%;">
             <!-- notebook column -->
             <div class="col-lg-3" id="notebooks">
@@ -101,7 +101,7 @@
                     </template>
                 </div>
 
-                <div class="content description" v-if="!editingSnippet && model.currentSnippet?.description?.length > 0">
+                <div class="content description text-muted" v-if="!editingSnippet && model.currentSnippet?.description?.length > 0">
                     <span>{{model.currentSnippet.description}}</span> 
                 </div>
 
@@ -114,11 +114,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="formDescription" class="form-label">Description</label>
-                                <textarea class="form-control" id="formDescription" v-model="model.currentSnippetInEditor.description">{{model.currentSnippetInEditor.description}}</textarea>
+                                <textarea class="form-control" id="formDescription" v-model="model.currentSnippetInEditor.description" style="height:100px;">{{model.currentSnippetInEditor.description}}</textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="formContent" class="form-label col-md-12">Content</label>
-                                <textarea class="form-control" id="formContent" v-model="model.currentSnippetInEditor.content">{{model.currentSnippetInEditor.content}}</textarea>
+                                <textarea class="form-control" id="formContent" v-model="model.currentSnippetInEditor.content" style="height:600px;">{{model.currentSnippetInEditor.content}}</textarea>
                             </div>
                         </form>
                     </template>
@@ -130,23 +130,23 @@
             </div>
 
         </div>
-    </div>
-    <div class="row">
-		<i class="icon-edit"></i>
-		<i class="icon-star-empty"></i>
-		<i class="icon-star"></i>
-		<i class="icon-lock"></i>
-		<i class="icon-lock-open"></i>
-		<i class="icon-link"></i>
-		<i class="icon-cancel"></i>
-		<i class="icon-link-ext"></i>
-		<i class="icon-docs"></i>
-		<i class="icon-sort"></i>
-		<i class="icon-paste"></i>
-		<i class="icon-share"></i>
-      </div>
-
+        <!--div class="row">
+            <i class="icon-edit"></i>
+            <i class="icon-star-empty"></i>
+            <i class="icon-star"></i>
+            <i class="icon-lock"></i>
+            <i class="icon-lock-open"></i>
+            <i class="icon-link"></i>
+            <i class="icon-cancel"></i>
+            <i class="icon-link-ext"></i>
+            <i class="icon-docs"></i>
+            <i class="icon-sort"></i>
+            <i class="icon-paste"></i>
+            <i class="icon-share"></i>
+        </div-->
+    
     <div class="clear"></div>
+</div>
 
 </body>
 </html>
