@@ -1,24 +1,9 @@
 // tutorial: firebase basics
 // https://www.youtube.com/watch?v=q5J5ho7YUhA&ab_channel=Fireship
-
 const db = firebase.firestore();
-
 let dbNotesRef = db.collection('notes');
-//let unsubscribe;
-
-
 // User Authentication
 const auth = firebase.auth();
-
-const whenSignedIn = document.getElementById('whenSignedIn');
-const whenSignedOut = document.getElementById('whenSignedOut');
-
-// const signInBtn = document.getElementById('signInBtn');
-// const signOutBtn = document.getElementById('signOutBtn');
-
-const userDetails = document.getElementById('userDetails');
-
-
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 let self;
 
@@ -36,49 +21,92 @@ var vm = new Vue({
           notes: [],
           currentNote: null,
           currentSnippet: null,
-          currentSnippetInEditor: null, // for edit mode, leave original intact in case cancelling edit
+          currentSnippetInEditor: null, // for edit mode, leave original intact in case of cancellation
           notesUsubscribe: null,
       },
       state:{
-        editingSnippet: false
       }
     },
     computed:{
+        editingSnippet: function(){
+            return this.model.currentSnippetInEditor != null;
+        }
     },
     methods:{
         selectNotebook: function(note){
             this.model.currentNote = note;
+        },
+        createSnippet: function(){
+            // check if already editing new snippet
+            if (self.model.currentNote?.children?.[0]?.id == 0) return;
+
+            var snippet = {
+                uid: self.model.user.uid,
+                id: null,
+                children: [],
+                parent: self.model.currentNote.id,
+                title: 'New snippet',
+                description: '',
+                tags: []
+            };
+            self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
+            self.selectSnippet(snippet); // select new snippet
+            self.editSnippet(snippet);// immediately open in editor
         },
         selectSnippet: function(snippet){
             this.model.currentSnippet = snippet;
         },
         editSnippet: function(snippet){
             if (!snippet){
-                // cancel
-                this.state.editingSnippet = false;
-                this.model.currentSnippetInEditor = null;
+                this.model.currentSnippetInEditor = null; // cancel
             } else {
-                // edit
-                this.state.editingSnippet = true;
-                this.model.currentSnippetInEditor = _.cloneDeep(snippet);
+                this.model.currentSnippetInEditor = _.cloneDeep(snippet); // edit
             }
         },
         saveSnippet: function(){
-            console.log('save', this.model.currentSnippetInEditor.content);
-            this.model.currentSnippet = _.cloneDeep(this.model.currentSnippetInEditor);
-            
-            var docRef = dbNotesRef.doc(this.model.currentSnippet.id);
-            // update = update, set = insert. set will overwrite whole object if exists
-            docRef.update({
-                content: this.model.currentSnippet.content
-            })
-            .then(function() {
-                console.log("Document successfully updated!");
-                self.editSnippet(null);
-            })
-            .catch((error) => {
-                console.error("Error updating document: ", error);
-            });
+            //this.model.currentSnippet = _.cloneDeep(this.model.currentSnippetInEditor);
+            var snippet = this.model.currentSnippetInEditor;
+            // remove our metadata
+            delete snippet.children;
+            if (!snippet.id){
+                // insert. set will overwrite whole object if exists
+                //delete snippet.id;
+                dbNotesRef.add(
+                    snippet
+                )
+                .then(function(docRef) {
+                    self.onSnippetSave(null, snippet, "Document successfully added")
+                })
+                .catch(function(error) {
+                    self.onSnippetSave(error, snippet, "Error adding document");
+                });
+            } else {
+                // update
+                var docRef = dbNotesRef.doc(snippet.id);
+                // update = update, set = insert. set will overwrite whole object if exists
+                docRef.update({
+                    title: snippet.title,
+                    description: snippet.description,
+                    content: snippet.content
+                })
+                .then(function() {
+                    self.onSnippetSave(null, snippet, "Document successfully updated!")
+                })
+                .catch((error) => {
+                    self.onSnippetSave(error, snippet, "Error updating document");
+                });
+            }
+        },
+        onSnippetSave: function(error, snippet, msg){
+            if (error){
+                console.error(msg || 'Error', error);
+            } else {
+                console.log(msg);
+                // refresh edited item in list with edited values
+                // should be loaded from db but then we have to recalculate children metadata
+                _.merge(this.model.currentSnippet, snippet);
+                this.editSnippet(null);
+            }
         },
         onAuthStateChanged: function(user){
           console.log('onAuthStateChanged', user)  
@@ -124,49 +152,4 @@ var vm = new Vue({
   }).$mount("#app");
 
 
-
-///// Firestore /////
-// const db = firebase.firestore();
-// const createThing = document.getElementById('createThing');
-// const thingsList = document.getElementById('thingsList');
-
-// let collNotes;
-// let unsubscribe;
-
 auth.onAuthStateChanged(user => vm.onAuthStateChanged(user));
-/*
-auth.onAuthStateChanged(user => {
-
-    if (user) {
-
-        // Database Reference
-        collNotes = db.collection('notes')
-
-        // createThing.onclick = () => {
-        //     const { serverTimestamp } = firebase.firestore.FieldValue;
-        //     thingsRef.add({
-        //         uid: user.uid,
-        //         name: faker.commerce.productName(),
-        //         datecreated: serverTimestamp()
-        //     });
-        // }
-
-        // Query
-        unsubscribe = collNotes
-            .where('uid', '==', user.uid)
-            .where('parent', '==', null )
-            .orderBy('datecreated') // Requires a query
-            .onSnapshot(querySnapshot => {
-                
-                // Map results to an array of li elements
-
-                const items = querySnapshot.docs.map(doc => {
-                    return `<li>${doc.data().title}</li>`
-                });
-                thingsList.innerHTML = items.join('');
-            });
-    } else {
-        // Unsubscribe when the user signs out
-        unsubscribe && unsubscribe();
-    }
-});*/

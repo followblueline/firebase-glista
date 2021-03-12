@@ -25,14 +25,14 @@
     <script src="app.js" defer></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/fontello.css">
+    <link rel="stylesheet" href="css/fontello/fontello.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
     <div id="app" class="_container-fluid">
         <div class="row no-gutters" style="min-height:100%;">
-
+            <!-- notebook column -->
             <div class="col-lg-3" id="notebooks">
                 <div class="header">
                     <img src="images/glista.png" width="64px" alt="Glista">
@@ -45,49 +45,84 @@
                     <button v-if="model.user" @click="onSignOut" class="btn btn-light">Sign Out</button>
                     <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-light">Google Sign In</button>
                 </div>
-
                 <div class="clear"></div>
 
-
+                <!-- notebook list -->
                 <ul class="list-group list-group-flush">
                     <li :class="['list-group-item', {selected: note.id == model.currentNote?.id}]" 
                     v-for="note in model.notes" @click="selectNotebook(note)">{{ note.title }}</li>
                 </ul>
             </div>
             
+            <!-- snippets -->
             <div class="col-lg-3" id="snippets">
                 <div class="header">Snippets
-                    <button class="btn btn-primary btn-xs">Create snippet</button>
+                    <div v-if="model.currentNote" class="cmds">
+                        <button class="btn btn-primary btn-xs" @click="createSnippet">Create snippet</button>
+                    </div>
                 </div>
 
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item snippet" v-for="snippet in model.currentNote?.children" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
+                    <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
+                        v-for="snippet in model.currentNote?.children" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
                 </ul>
                 <div v-if="!model.currentNote || model.currentNote.children.length == 0" style="opacity:0.2;text-align: center;">
                     <img src="images/noapple.JPG" width="50" alt="no records">
                 </div>
             </div>
 
-            <div class="col-lg-6" id="note">
+            <!-- current snippet editor -->
+            <div class="col-lg-6" id="snippet">
                 <div class="header">
-                    <template v-if="model.currentSnippet">{{model.currentSnippet.title}}
+                    <template v-if="model.currentSnippet">
+                        <template v-if="editingSnippet">
+                            <span class="title">{{model.currentSnippet.id == 0 ? 'New snippet' : 'Edit snippet'}}</span>
+                            <div v-if="editingSnippet" class="cmds">
+                                <button class="btn btn-secondary" @click="editSnippet()" >Cancel</button>
+                                <button class="btn btn-primary" @click="saveSnippet()">Save</button>
+                            </div>
+                        </template>
 
-                        <div v-if="state.editingSnippet" class="cmds">
-                            <button class="btn btn-light" @click="editSnippet()" >Cancel</button>
-                            <button class="btn btn-primary" @click="saveSnippet()">Save</button>
-                        </div>
-                        <div v-else class="cmds">
-                            <span class="icon" @click="editSnippet(model.currentSnippet)"><i class="icon-edit" alt="Edit" title="Edit"></i></span>
-                            <span class="icon" ><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
-                            <span class="icon" ><i class="icon-trash-empty" alt="Delete" title="Delete"></i></span>
-                        </div>
+                        <template v-if="!editingSnippet">
+                            <span class="title">{{model.currentSnippet.title}}</span>
+                            <div class="cmds">
+                                <span class="icon" @click="editSnippet(model.currentSnippet)"><i class="icon-edit" alt="Edit" title="Edit"></i></span>
+                                <span class="icon" ><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
+                                <span class="icon" ><i class="icon-trash-empty" alt="Delete" title="Delete"></i></span>
+                            </div>
+                        </template>
                     </template>
-                    
                 </div>
-                <div class="content" v-if="model.currentSnippet">
-                    <template v-if="state.editingSnippet">
-                        <textarea v-model="model.currentSnippetInEditor.content" style="width: 99%;">{{model.currentSnippetInEditor.content}}</textarea>
+                <div class="metadata">
+                    <template v-if="!editingSnippet">
+                        <span class="badge rounded-pill bg-primary">Primary</span>
+                        <span class="badge rounded-pill bg-primary">Javascript</span>
+                        <span class="badge rounded-pill bg-primary">C#</span>
                     </template>
+                </div>
+
+                <div class="content description" v-if="!editingSnippet && model.currentSnippet?.description?.length > 0">
+                    <span>{{model.currentSnippet.description}}</span> 
+                </div>
+
+                <div class="content" v-if="model.currentSnippet">
+                    <template v-if="editingSnippet">
+                        <form>
+                            <div class="mb-3">
+                                <label for="formTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="formTitle" v-model="model.currentSnippetInEditor.title">
+                            </div>
+                            <div class="mb-3">
+                                <label for="formDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="formDescription" v-model="model.currentSnippetInEditor.description">{{model.currentSnippetInEditor.description}}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="formContent" class="form-label col-md-12">Content</label>
+                                <textarea class="form-control" id="formContent" v-model="model.currentSnippetInEditor.content">{{model.currentSnippetInEditor.content}}</textarea>
+                            </div>
+                        </form>
+                    </template>
+                    <!-- display mode -->
                     <template v-else>
                         {{model.currentSnippet.content}}
                     </template>
