@@ -5,8 +5,9 @@ let dbNotesRef = db.collection('notes');
 // User Authentication
 const auth = firebase.auth();
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-let self;
+Vue.use(hljs.vuePlugin);
 
+let self;
 var vm = new Vue({
     // components:{
     //   'movie-list': cMovieList
@@ -54,8 +55,26 @@ var vm = new Vue({
             self.editSnippet(snippet);// immediately open in editor
         },
         selectSnippet: function(snippet){
-            this.model.currentSnippet = snippet;
+            this.model.currentSnippet = null;
+            this.$nextTick().then(() => {
+                // highlighter replaces pre > code element and vue is not registering change
+                // destroy dom element in if with null
+                // and rerender again
+                this.model.currentSnippet = snippet;
+                setTimeout(() => {
+                hljs.highlightAll();
+                }, 100);
+              });
+            // document.querySelectorAll('#snippet .content pre code').forEach((block) => {
+            //     console.log(block);
+            //     hljs.highlightBlock(block);
+            // });
+            // hljs.highlightAll();
+            // self.$forceUpdate();
         },
+        // highlightSnippet: function(content){
+        //     hljs.highlightBlock(content);
+        // },
         editSnippet: function(snippet){
             if (!snippet){
                 this.model.currentSnippetInEditor = null; // cancel

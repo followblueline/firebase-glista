@@ -22,6 +22,12 @@
 
     <script src="scripts/arrayToTree.js"></script>
     <script src="scripts/lodash.min.js" defer></script>
+    <link rel="stylesheet" href="scripts/highlight/styles/tomorrow.css">
+    <script src="scripts/highlight/highlight.pack.js"></script>
+    <!-- <link rel="stylesheet" href="scripts/prism/style.css" />
+    <script src="scripts/prism/prism.js" defer></script> -->
+
+
     <script src="app.js" defer></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -49,6 +55,7 @@
                 <div class="clear"></div>
 
                 <!-- notebook list -->
+                <h2>Folders</h2>
                 <ul class="list-group list-group-flush">
                     <li :class="['list-group-item', {selected: note.id == model.currentNote?.id}]" 
                     v-for="note in model.notes" @click="selectNotebook(note)">{{ note.title }}</li>
@@ -76,7 +83,7 @@
             <div class="col-lg-6" id="snippet">
                 <!-- prevent submit, vue will do the job -->
                 <form v-on:submit.prevent>
-                    <div class="header">
+                    <div :class="['header', {editing: editingSnippet}]">
                         <template v-if="model.currentSnippet">
                             <template v-if="editingSnippet">
                                 <span class="title">{{model.currentSnippet.id == 0 ? 'New snippet' : 'Edit snippet'}}</span>
@@ -101,13 +108,16 @@
                             <span class="badge rounded-pill bg-primary">Primary</span>
                             <span class="badge rounded-pill bg-primary">Javascript</span>
                             <span class="badge rounded-pill bg-primary">C#</span>
-
+                         </template>
+                        <template v-if="editingSnippet">
                             <select class="form-select" aria-label="Default select example">
                                 <option selected="">Text</option>
                                 <option value="markdown">Markdown</option>
                                 <option value="code">Code</option>
-                              </select>
+                            </select>
                         </template>
+
+                        Asc/desc
                     </div>
 
                     <div class="content description text-muted" v-if="!editingSnippet && model.currentSnippet?.description?.length > 0">
@@ -131,7 +141,34 @@
                         </template>
                         <!-- display mode -->
                         <template v-else>
-                            {{model.currentSnippet.content}}
+                            <pre><code class="javascript">
+                                {{model.currentSnippet.content}}</code>
+                            </pre>
+                            <h1>end of content</h1>
+
+    <!-- or literal code works as well -->
+    <!-- <highlightjs key="2" language='javascript' :code="'var x = 15;'"/>
+        <highlightjs language='javascript' code="var x = 5;" /> -->
+
+    <pre><code class="javascript">
+        var banana = function(x){
+            console.log('banana');
+        }
+        <!--$(document).ready(function() {
+          $('pre code').each(function(i, block) {
+            hljs.highlightBlock(block);
+          });
+          document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((block) => {
+              hljs.highlightBlock(block);
+            });
+          });
+        });-->
+        </code></pre>
+        <pre><code class="language-css">p { color: red }</code></pre>
+        <pre><code class="language-js">var foo = function(x){ return x + 'banana';};</code></pre>
+        <pre><code class="language-cs">int bar = 125;</code></pre>
+        <pre><code class="language-sql">SELECT TOP 10 name, surname FROM customers WHERE company = 'fOO';</code></pre>
                         </template>
                     </div>
                 </form>
