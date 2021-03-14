@@ -30,6 +30,9 @@ html, body {
 #snippet .content.description {border-bottom: 1px solid lightgray; background-color: #f5f5f5;}
 #snippet .metadata {padding: 5px; height: 44px; background-color: #f1f1f1; border-bottom: 1px solid lightgray;}
 
+/* highlighter js has it, so have we to prevent jumping */
+#snippet pre code {padding:0.5em; display: block;};
+
 .user {margin-bottom: 50px;}
 
 .clear {clear: both;}
