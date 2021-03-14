@@ -82,6 +82,7 @@ var vm = new Vue({
         editSnippet: function(snippet){
             if (!snippet){
                 this.model.currentSnippetInEditor = null; // cancel
+                this.highlightCode(this.model.currentSnippet);
             } else {
                 this.model.currentSnippetInEditor = _.cloneDeep(snippet); // edit
             }
