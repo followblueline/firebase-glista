@@ -55,7 +55,11 @@ var vm = new Vue({
             self.editSnippet(snippet);// immediately open in editor
         },
         selectSnippet: function(snippet){
+            this.editSnippet(null); // reset editor
             this.model.currentSnippet = null;
+            this.highlightCode(snippet);
+        },
+        highlightCode: function(snippet){
             this.$nextTick().then(() => {
                 // highlighter replaces pre > code element and vue is not registering change
                 // destroy dom element in if with null
@@ -131,6 +135,7 @@ var vm = new Vue({
                 // should be loaded from db but then we have to recalculate children metadata
                 _.merge(this.model.currentSnippet, snippet);
                 this.editSnippet(null);
+                this.highlightCode(snippet);
             }
         },
         deleteSnippet: function(snippet){
