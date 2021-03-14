@@ -140,33 +140,9 @@
                             </div>
                         </template>
                         <!-- display mode -->
+                        <!-- https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md -->
                         <template v-else>
                             <pre><code class="autodetect">{{model.currentSnippet.content}}</code></pre>
-                            <h1>end of content</h1>
-
-    <!-- or literal code works as well -->
-    <!-- <highlightjs key="2" language='javascript' :code="'var x = 15;'"/>
-        <highlightjs language='javascript' code="var x = 5;" /> -->
-
-    <pre><code class="javascript">
-        var banana = function(x){
-            console.log('banana');
-        }
-        <!--$(document).ready(function() {
-          $('pre code').each(function(i, block) {
-            hljs.highlightBlock(block);
-          });
-          document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('pre code').forEach((block) => {
-              hljs.highlightBlock(block);
-            });
-          });
-        });-->
-        </code></pre>
-        <pre><code class="language-css">p { color: red }</code></pre>
-        <pre><code class="language-js">var foo = function(x){ return x + 'banana';};</code></pre>
-        <pre><code class="language-cs">int bar = 125;</code></pre>
-        <pre><code class="language-sql">SELECT TOP 10 name, surname FROM customers WHERE company = 'fOO';</code></pre>
                         </template>
                     </div>
                 </form>
