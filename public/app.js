@@ -88,10 +88,13 @@ var vm = new Vue({
         },
         // highlight code in editor
         highlightEditorCode: function(snippet){
+            // codemirror init https://codemirror.net/doc/manual.html
             this.$nextTick().then(() => {
                 this.model.codeMirrorRef = CodeMirror.fromTextArea(document.getElementById("formContent"), {
                     lineNumbers: true,
-                mode: 'javascript'
+                    tabSize: 4,
+                    indentUnit: 4,
+                    mode: 'javascript'
                 });
               });
             // self.$forceUpdate();
