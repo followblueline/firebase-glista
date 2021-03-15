@@ -41,7 +41,7 @@ var vm = new Vue({
         },
         createSnippet: function(){
             // check if already editing new snippet
-            if (self.model.currentNote?.children?.[0]?.id == 0) return;
+            //if (self.model.currentNote?.children?.[0]?.id == 0) return;
 
             var snippet = {
                 uid: self.model.user.uid,
@@ -52,51 +52,39 @@ var vm = new Vue({
                 description: '',
                 tags: []
             };
-            self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
+            //self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
             self.selectSnippet(snippet); // select new snippet
             self.editSnippet(snippet);// immediately open in editor
         },
         selectSnippet: function(snippet){
-            this.editSnippet(null); // reset editor
+            this.editSnippet(null); // hide editor
+            // highlighter rebuilds  pre > code element and vue is not registering content change
+            // destroy and rerender dom element with if (set model to null, and again to model)
             this.model.currentSnippet = null;
-            if (snippet)
-                this.highlightCode(snippet);
+            if (snippet){
+                this.$nextTick().then(() => {
+                    this.model.currentSnippet = snippet;
+                    this.highlightCode(snippet);
+                });
+            }
         },
         // highlight presentation code in viewer
         highlightCode: function(snippet){
             if (!snippet) return;
-            this.$nextTick().then(() => {
-                // highlighter rebuilds  pre > code element and vue is not registering change
+            //this.$nextTick().then(() => {
+                // highlighter rebuilds  pre > code element and vue is not registering content change
                 // destroy and rerender dom element with if (set model to null, and again to model)
-                this.model.currentSnippet = snippet;
                 // also, highlight after rendering content
                 setTimeout(() => {
-                    document.querySelector("#snippet .content").style.opacity = 0;
-                    
                     hljs.highlightAll();
-                    this.adjustViewerFontSize();
-                    document.querySelector("#snippet .content").style.opacity = 1;
                 }, 100);
-              });
+              //});
             // for multiple files we might need this
             // document.querySelectorAll('#snippet .content pre code').forEach((block) => {
             //     console.log(block);
             //     hljs.highlightBlock(block);
             // });
             // hljs.highlightAll();
-            // self.$forceUpdate();
-        },
-        // highlight code in editor
-        highlightEditorCode: function(snippet){
-            // codemirror init https://codemirror.net/doc/manual.html
-            this.$nextTick().then(() => {
-                this.model.codeMirrorRef = CodeMirror.fromTextArea(document.getElementById("formContent"), {
-                    lineNumbers: true,
-                    tabSize: 4,
-                    indentUnit: 4,
-                    mode: 'javascript'
-                });
-              });
             // self.$forceUpdate();
         },
         // open snippet in editor. content is cloned from current snippet so we can restore it on cancel without rereading it from db
@@ -106,8 +94,26 @@ var vm = new Vue({
                 this.highlightCode(this.model.currentSnippet); // cancel btn
             } else {
                 this.model.currentSnippetInEditor = _.cloneDeep(snippet); // edit
-                this.highlightEditorCode(snippet);
+                //vm.$forceUpdate();
+                //vm.$nextTick().then(() => {
+                //this.loadCodeEditor(snippet);
+                //});
+                setTimeout(() => {
+                    self.loadCodeEditor(snippet);
+                }, 100);
             }
+        },
+        // highlight code in editor
+        loadCodeEditor: function(snippet){
+            // codemirror init https://codemirror.net/doc/manual.html
+            this.model.codeMirrorRef = CodeMirror.fromTextArea(document.getElementById("formContent"), {
+                lineNumbers: true,
+                tabSize: 4,
+                indentUnit: 4,
+                mode: 'javascript'
+            });
+            this.model.codeMirrorRef.getScrollerElement().style.minHeight = '300px';
+            this.model.codeMirrorRef.refresh();
         },
         validateSnippet: function(snippet){
             // real validation goes here
@@ -116,6 +122,7 @@ var vm = new Vue({
         },
         saveSnippet: function(){
             var snippet = this.model.currentSnippetInEditor;
+            if (!this.model.codeMirrorRef) console.error('codeMirrorRef not loaded!');
             snippet.content = this.model.codeMirrorRef.doc.getValue(); // get non-highlighted text
             if (!this.validateSnippet(snippet)) return;
 
@@ -158,6 +165,7 @@ var vm = new Vue({
                 // refresh edited item in list with edited values
                 // should be loaded from db but then we have to recalculate children metadata
                 _.merge(this.model.currentSnippet, snippet);
+                self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
                 this.editSnippet(null);
                 this.highlightCode(snippet);
             }

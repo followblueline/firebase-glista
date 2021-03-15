@@ -27,7 +27,8 @@ html, body {
 #snippets .snippet.selected {background-color: #f1f1f1; padding-left: 15px; border-left: 5px solid #ffd000;}
 
 #snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px;}
-#snippet .header .cmds, #snippets .header .cmds {float: right;}
+#snippets .header .cmds {position: absolute; right: 10px; top: 10px;}
+#snippet .header .cmds {float: right;}
 #snippet .header .cmds {margin-top: -5px}
 #snippet .header .title {max-width: 390px; display: inline-block; line-height: 1.2rem;  margin-top: -2px;}
 #snippet .header.editing {background-color: #ffd000;}
@@ -60,3 +61,7 @@ html, body {
 /* codemirror override */
 /* automatically resize to fit its content.*/
 .CodeMirror { border: 1px solid #eee; height: auto; }
+.cm-content, .cm-gutter { min-height: 150px; }
+.cm-gutters { margin: 1px; }
+.cm-scroller { overflow: auto; }
+.cm-wrap { border: 1px solid silver }
