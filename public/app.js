@@ -90,6 +90,8 @@ var vm = new Vue({
         // open snippet in editor. content is cloned from current snippet so we can restore it on cancel without rereading it from db
         editSnippet: function(snippet){
             if (!snippet){
+                if (this.model.codeMirrorRef)
+                    this.model.codeMirrorRef.toTextArea(); // prevent submit handler memory leak
                 this.model.currentSnippetInEditor = null; // cancel btn
                 this.highlightCode(this.model.currentSnippet); // cancel btn
             } else {
@@ -165,7 +167,10 @@ var vm = new Vue({
                 // refresh edited item in list with edited values
                 // should be loaded from db but then we have to recalculate children metadata
                 _.merge(this.model.currentSnippet, snippet);
-                self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
+                // if snippet was created, append it to snippets list
+                var exists = self.model.currentNote.children.find(x => x.id == snippet.id);
+                if (!exists)
+                    self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
                 this.editSnippet(null);
                 this.highlightCode(snippet);
             }
