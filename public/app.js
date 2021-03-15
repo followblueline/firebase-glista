@@ -15,6 +15,7 @@ var vm = new Vue({
     created: function(){
       self = this; // preserve this scope for async functions
       console.log("vue created");
+      self.adjustViewerFontSize();
     },
     data: {
       model: {
@@ -23,6 +24,7 @@ var vm = new Vue({
           currentNote: null,
           currentSnippet: null,
           currentSnippetInEditor: null, // for edit mode, leave original intact in case of cancellation
+          codeMirrorRef: null, // reference for code mirror, we need it to retrieve non-highlighted editor content before saving
           notesUsubscribe: null,
       },
       state:{
@@ -57,18 +59,26 @@ var vm = new Vue({
         selectSnippet: function(snippet){
             this.editSnippet(null); // reset editor
             this.model.currentSnippet = null;
-            this.highlightCode(snippet);
+            if (snippet)
+                this.highlightCode(snippet);
         },
+        // highlight presentation code in viewer
         highlightCode: function(snippet){
+            if (!snippet) return;
             this.$nextTick().then(() => {
-                // highlighter replaces pre > code element and vue is not registering change
-                // destroy dom element in if with null
-                // and rerender again
+                // highlighter rebuilds  pre > code element and vue is not registering change
+                // destroy and rerender dom element with if (set model to null, and again to model)
                 this.model.currentSnippet = snippet;
+                // also, highlight after rendering content
                 setTimeout(() => {
-                hljs.highlightAll();
+                    document.querySelector("#snippet .content").style.opacity = 0;
+                    
+                    hljs.highlightAll();
+                    this.adjustViewerFontSize();
+                    document.querySelector("#snippet .content").style.opacity = 1;
                 }, 100);
               });
+            // for multiple files we might need this
             // document.querySelectorAll('#snippet .content pre code').forEach((block) => {
             //     console.log(block);
             //     hljs.highlightBlock(block);
@@ -76,15 +86,24 @@ var vm = new Vue({
             // hljs.highlightAll();
             // self.$forceUpdate();
         },
-        // highlightSnippet: function(content){
-        //     hljs.highlightBlock(content);
-        // },
+        // highlight code in editor
+        highlightEditorCode: function(snippet){
+            this.$nextTick().then(() => {
+                this.model.codeMirrorRef = CodeMirror.fromTextArea(document.getElementById("formContent"), {
+                    lineNumbers: true,
+                mode: 'javascript'
+                });
+              });
+            // self.$forceUpdate();
+        },
+        // open snippet in editor. content is cloned from current snippet so we can restore it on cancel without rereading it from db
         editSnippet: function(snippet){
             if (!snippet){
-                this.model.currentSnippetInEditor = null; // cancel
-                this.highlightCode(this.model.currentSnippet);
+                this.model.currentSnippetInEditor = null; // cancel btn
+                this.highlightCode(this.model.currentSnippet); // cancel btn
             } else {
                 this.model.currentSnippetInEditor = _.cloneDeep(snippet); // edit
+                this.highlightEditorCode(snippet);
             }
         },
         validateSnippet: function(snippet){
@@ -94,6 +113,7 @@ var vm = new Vue({
         },
         saveSnippet: function(){
             var snippet = this.model.currentSnippetInEditor;
+            snippet.content = this.model.codeMirrorRef.doc.getValue(); // get non-highlighted text
             if (!this.validateSnippet(snippet)) return;
 
             // remove our metadata
@@ -196,7 +216,7 @@ var vm = new Vue({
             auth.signInWithPopup(googleAuthProvider);
         },
         onEmailPassSignIn: function(){
-            let email = 'vrtnipanj@gmail.com';
+            let email = 'someemail@gmail.com';
             let password = 'banana123';
             auth.signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
@@ -207,6 +227,28 @@ var vm = new Vue({
             .catch((error) => {
                 console.log('SignIn error', error);
             });
+        },
+        adjustViewerFontSize: function(sizeAdjustment){
+            // check if we have saved size
+            let newSize = null;
+            if (!sizeAdjustment && localStorage.getItem('viewerFontSize') != null){
+                newSize = parseInt(localStorage.getItem('viewerFontSize'));
+            }
+            if (!sizeAdjustment && !newSize) return;
+            
+            let viewerColl = document.querySelectorAll("#snippet .content");
+            let viewer = viewerColl && viewerColl[0] ? viewerColl[0]: null; // take just first instance for now
+            if (viewer){
+                if (sizeAdjustment){
+                    let oldSize = window.getComputedStyle(viewer, null).getPropertyValue('font-size');
+                    newSize = parseFloat(oldSize) + sizeAdjustment;
+                }
+                // using css custom property
+                // setting it through style will apply it after rendering making content jerky
+                document.documentElement.style.setProperty("--content-font-size", newSize + 'px');
+                //viewer.style.fontSize = (newSize) + 'px';
+                localStorage.setItem('viewerFontSize', newSize); // remember
+            }
         }
     },
   }).$mount("#app");

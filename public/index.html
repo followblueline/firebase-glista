@@ -22,14 +22,25 @@
 
     <script src="scripts/arrayToTree.js"></script>
     <script src="scripts/lodash.min.js" defer></script>
-    <link rel="stylesheet" href="scripts/highlight/styles/tomorrow.css">
+    <!-- highlight js syntax highlighter -->
+    <!-- preview more themes on https://highlightjs.org/static/demo/ -->
+    <link rel="stylesheet" href="scripts/highlight/styles/github.css">
     <script src="scripts/highlight/highlight.pack.js"></script>
-    <!-- <link rel="stylesheet" href="scripts/prism/style.css" />
-    <script src="scripts/prism/prism.js" defer></script> -->
-
+    <!-- codemirror text editor -->
+    <script src="scripts/codemirror/codemirror.min.js"></script>
+    <link rel="stylesheet" href="scripts/codemirror/codemirror.min.css">
+    <script src="scripts/codemirror/javascript.js"></script>
+    <script src="scripts/codemirror/sql.js"></script>
+    <script src="scripts/codemirror/clike.js"></script>
+    <script src="scripts/codemirror/htmlmixed.js"></script>
+    <script src="scripts/codemirror/css.js"></script>
+    <script src="scripts/codemirror/python.js"></script>
+    <script src="scripts/codemirror/xml.js"></script>
+    <!-- lets try to simulate our syntax highlighter theme -->
+    <link rel="stylesheet" href="scripts/codemirror/highlight_github_sim.css">
 
     <script src="app.js" defer></script>
-
+    <!-- to modify icon selection go to fontello.com, wrench icon >  import config.json from \public\css\fontello folder -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="css/fontello/fontello.css">
     <link rel="stylesheet" href="css/styles.css">
@@ -117,7 +128,11 @@
                             </select>
                         </template>
 
-                        Asc/desc
+                        <i class="icon-link"></i>
+                        <i class="icon-docs" title="Copy to clipboard"></i>
+
+                        <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-squared-alt" title="Increase font size"></i>
+                        <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-squared-alt" title="Decrease font size"></i>
                     </div>
 
                     <div class="content description text-muted" v-if="!editingSnippet && model.currentSnippet?.description?.length > 0">
@@ -132,7 +147,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="formDescription" class="form-label">Description</label>
-                                <textarea class="form-control" id="formDescription" v-model="model.currentSnippetInEditor.description" style="height:100px;">{{model.currentSnippetInEditor.description}}</textarea>
+                                <textarea class="form-control" id="formDescription" v-model="model.currentSnippetInEditor.description" style="height:60px;">{{model.currentSnippetInEditor.description}}</textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="formContent" class="form-label">Content</label>
@@ -141,6 +156,7 @@
                         </template>
                         <!-- display mode -->
                         <!-- https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md -->
+                        <!-- plaintext, csharp, javascript/js, json, java, sql, python, css -->
                         <template v-else>
                             <pre><code class="autodetect">{{model.currentSnippet.content}}</code></pre>
                         </template>
