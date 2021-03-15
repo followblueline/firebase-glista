@@ -128,11 +128,14 @@
                             </select>
                         </template>
 
-                        <i class="icon-link"></i>
-                        <i class="icon-docs" title="Copy to clipboard"></i>
-
-                        <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-squared-alt" title="Increase font size"></i>
-                        <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-squared-alt" title="Decrease font size"></i>
+                        <div class="cmds">
+                            <i class="icon-link"></i>
+                            <i class="icon-docs" title="Copy to clipboard"></i>
+                            
+                            <i v-if="model.currentSnippet" @click="cloneSnippet()" class="icon icon-docs-1" title="Clone snippet"></i>
+                            <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-squared-alt" title="Increase font size"></i>
+                            <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-squared-alt" title="Decrease font size"></i>
+                        </div>
                     </div>
 
                     <div class="content description text-muted" v-if="!editingSnippet && model.currentSnippet?.description?.length > 0">

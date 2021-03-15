@@ -105,6 +105,17 @@ var vm = new Vue({
                 }, 100);
             }
         },
+        cloneSnippet: function(){
+            if (this.editingSnippet){
+                this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippetInEditor);
+                this.model.currentSnippetInEditor.id = null;
+                this.model.currentSnippetInEditor.title +=" clone";
+            } else if(this.model.currentSnippet) {
+                this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippet);
+                this.model.currentSnippetInEditor.id = null;
+                this.editSnippet(this.model.currentSnippetInEditor);
+            }
+        },
         // highlight code in editor
         loadCodeEditor: function(snippet){
             // codemirror init https://codemirror.net/doc/manual.html
@@ -166,11 +177,17 @@ var vm = new Vue({
                 console.log(msg);
                 // refresh edited item in list with edited values
                 // should be loaded from db but then we have to recalculate children metadata
-                _.merge(this.model.currentSnippet, snippet);
-                // if snippet was created, append it to snippets list
-                var exists = self.model.currentNote.children.find(x => x.id == snippet.id);
-                if (!exists)
+                let created = this.model.currentSnippet.id == null || snippet.id != this.model.currentSnippet.id; // created or cloned
+                if (!created){
+                    // existing snippet
+                    _.merge(this.model.currentSnippet, snippet);
+                } else {
+                    // if snippet was created, append it to snippets list
+                    // var exists = self.model.currentNote.children.find(x => x.id == snippet.id);
+                    // if (!exists)
                     self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
+                    this.selectSnippet(snippet);// select clone
+                }
                 this.editSnippet(null);
                 this.highlightCode(snippet);
             }

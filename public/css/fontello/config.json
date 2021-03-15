@@ -95,6 +95,12 @@
       "css": "minus-squared-alt",
       "code": 61767,
       "src": "fontawesome"
+    },
+    {
+      "uid": "922ab2cb66943a83de969990289ef1dc",
+      "css": "docs-1",
+      "code": 59400,
+      "src": "entypo"
     }
   ]
 }
