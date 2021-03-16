@@ -6,6 +6,7 @@ let dbNotesRef = db.collection('notes');
 const auth = firebase.auth();
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 Vue.use(hljs.vuePlugin);
+Vue.use(VueToast);// https://www.npmjs.com/package/vue-toast-notification
 
 let self;
 var vm = new Vue({
@@ -290,9 +291,15 @@ var vm = new Vue({
                 localStorage.setItem('viewerFontSize', newSize); // remember
             }
         },
-        // shorten text
-        truncateText: function (str, n){
-            return (str.length > n) ? str.substr(0, n-1) + '...' : str;
+        copyToClipboard: function(){
+            let text = '';
+            if(this.editingSnippet){
+                text = this.model.codeMirrorRef.doc.getValue()
+            } else {
+                text = vm.model.currentSnippet.content
+            }
+            var promise = navigator.clipboard.writeText(text);
+            Vue.$toast.open('Content copied to clipboard.');
         }
     },
   }).$mount("#app");

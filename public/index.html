@@ -38,6 +38,9 @@
     <script src="scripts/codemirror/xml.js"></script>
     <!-- lets try to simulate our syntax highlighter theme -->
     <link rel="stylesheet" href="scripts/codemirror/highlight_github_sim.css">
+    <!--toast notification -->
+    <script src="https://cdn.jsdelivr.net/npm/vue-toast-notification"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vue-toast-notification/dist/theme-sugar.css" rel="stylesheet">
 
     <script src="app.js" defer></script>
     <!-- to modify icon selection go to fontello.com, wrench icon >  import config.json from \public\css\fontello folder -->
@@ -129,9 +132,8 @@
                         </template>
 
                         <div class="cmds">
-                            <i class="icon-link"></i>
-                            <i class="icon-docs" title="Copy to clipboard"></i>
-                            
+                            <!-- <i class="icon-link"></i> -->
+                            <i v-if="model.currentSnippet" @click="copyToClipboard()" class="icon icon-docs" title="Copy to clipboard"></i>
                             <i v-if="model.currentSnippet" @click="cloneSnippet()" class="icon icon-docs-1" title="Clone snippet"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-squared-alt" title="Increase font size"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-squared-alt" title="Decrease font size"></i>
