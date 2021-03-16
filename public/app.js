@@ -20,7 +20,7 @@ var vm = new Vue({
     data: {
       model: {
           user: null,
-          notes: [],
+          notes: [], // all notes
           currentNote: null,
           currentSnippet: null,
           currentSnippetInEditor: null, // for edit mode, leave original intact in case of cancellation
@@ -33,6 +33,14 @@ var vm = new Vue({
     computed:{
         editingSnippet: function(){
             return this.model.currentSnippetInEditor != null;
+        },
+        filteredNotes: function(){
+            return this.model.notes.filter(x => !x.parent);
+        },
+        filteredSnippets: function(){
+            if (this.model.currentNote)
+                return this.model.notes.filter(x => x.parent == this.model.currentNote.id);
+            return [];
         }
     },
     methods:{
@@ -41,18 +49,14 @@ var vm = new Vue({
         },
         createSnippet: function(){
             // check if already editing new snippet
-            //if (self.model.currentNote?.children?.[0]?.id == 0) return;
-
             var snippet = {
                 uid: self.model.user.uid,
                 id: null,
-                children: [],
                 parent: self.model.currentNote.id,
                 title: '',
                 description: '',
                 tags: []
             };
-            //self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
             self.selectSnippet(snippet); // select new snippet
             self.editSnippet(snippet);// immediately open in editor
         },
@@ -109,7 +113,7 @@ var vm = new Vue({
             if (this.editingSnippet){
                 this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippetInEditor);
                 this.model.currentSnippetInEditor.id = null;
-                this.model.currentSnippetInEditor.title +=" clone";
+                this.model.currentSnippetInEditor.title +=" clone"; 
             } else if(this.model.currentSnippet) {
                 this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippet);
                 this.model.currentSnippetInEditor.id = null;
@@ -139,8 +143,6 @@ var vm = new Vue({
             snippet.content = this.model.codeMirrorRef.doc.getValue(); // get non-highlighted text
             if (!this.validateSnippet(snippet)) return;
 
-            // remove our metadata
-            delete snippet.children;
             if (!snippet.id){
                 // insert. set will overwrite whole object if exists
                 dbNotesRef.add(
@@ -176,33 +178,35 @@ var vm = new Vue({
             } else {
                 console.log(msg);
                 // refresh edited item in list with edited values
-                // should be loaded from db but then we have to recalculate children metadata
+                // should be loaded from db
                 let created = this.model.currentSnippet.id == null || snippet.id != this.model.currentSnippet.id; // created or cloned
                 if (!created){
                     // existing snippet
                     _.merge(this.model.currentSnippet, snippet);
                 } else {
                     // if snippet was created, append it to snippets list
-                    // var exists = self.model.currentNote.children.find(x => x.id == snippet.id);
-                    // if (!exists)
-                    self.model.currentNote.children.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
+                    self.model.notes.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
                     this.selectSnippet(snippet);// select clone
                 }
+                this.sortNotes(self.model.notes); // reorder
                 this.editSnippet(null);
                 this.highlightCode(snippet);
             }
         },
         deleteSnippet: function(snippet){
             // Warning: Deleting a document does not delete its subcollections!
-            // TODO: if adding more sublevels, delete all children
             if (confirm(`Delete ${snippet.title}?`)){
                 dbNotesRef.doc(snippet.id)
                 .delete()
                 .then(() => {
                     console.log("Document successfully deleted!");
                     // osvjezi UI
-                    _.remove(self.model.currentNote.children, function(x) { return x.id == snippet.id});
-                    self.$forceUpdate();
+                    var itemIndex = self.model.notes.findIndex(x => x.id == snippet.id);
+                    self.model.notes.splice(itemIndex,1);
+                    self.selectSnippet(null);
+                    // doesnt refresh vue UI
+                    //_.remove(self.model.notes, function(x) { return x.id == snippet.id});
+                    //self.$forceUpdate();
                 }).catch((error) => {
                     console.error("Error removing document: ", error);
                 });
@@ -236,11 +240,14 @@ var vm = new Vue({
                     items.push(note);
                 });
                 // build tree
-                self.model.notes = arrayToTree(items);
+                self.model.notes = this.sortNotes(items);// arrayToTree(items);
             })
             .catch((error) => {
                 console.log("Error getting documents: ", error);
             });
+        },
+        sortNotes: function(notes){
+            return notes.sort((a, b) => a.title.localeCompare(b.title));
         },
         onSignOut: function(){
             auth.signOut();
@@ -282,6 +289,10 @@ var vm = new Vue({
                 //viewer.style.fontSize = (newSize) + 'px';
                 localStorage.setItem('viewerFontSize', newSize); // remember
             }
+        },
+        // shorten text
+        truncateText: function (str, n){
+            return (str.length > n) ? str.substr(0, n-1) + '...' : str;
         }
     },
   }).$mount("#app");

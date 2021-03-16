@@ -23,7 +23,7 @@ html, body {
 #notebooks .header h1::first-letter {color: coral;}
 #notebooks .list-group-item.selected {font-weight: bold;}
 
-#snippets .snippet {border-bottom: 1px solid lightgray; line-height: 1.2rem; font-size:0.96rem;}
+#snippets .snippet {border-bottom: 1px solid lightgray; line-height: 1.2rem; font-size:0.95rem; padding-top: 8px; padding-bottom: 7px; max-height: 68px;}
 #snippets .snippet.selected {background-color: #f1f1f1; padding-left: 15px; border-left: 5px solid #ffd000;}
 #snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px;}
 #snippets .header .cmds {position: absolute; right: 10px; top: 10px;}

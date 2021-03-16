@@ -20,7 +20,7 @@
     <!-- Vue -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 
-    <script src="scripts/arrayToTree.js"></script>
+    <!-- <script src="scripts/arrayToTree.js"></script> -->
     <script src="scripts/lodash.min.js" defer></script>
     <!-- highlight js syntax highlighter -->
     <!-- preview more themes on https://highlightjs.org/static/demo/ -->
@@ -69,7 +69,7 @@
                 <h2>Folders</h2>
                 <ul class="list-group list-group-flush">
                     <li :class="['list-group-item', {selected: note.id == model.currentNote?.id}]" 
-                    v-for="note in model.notes" @click="selectNotebook(note)">{{ note.title }}</li>
+                    v-for="note in filteredNotes" @click="selectNotebook(note)">{{ note.title }}</li>
                 </ul>
             </div>
             
@@ -83,9 +83,9 @@
 
                 <ul class="list-group list-group-flush">
                     <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
-                        v-for="snippet in model.currentNote?.children" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
+                        v-for="snippet in filteredSnippets" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
                 </ul>
-                <div v-if="!model.currentNote || model.currentNote.children.length == 0" style="opacity:0.2;text-align: center;">
+                <div v-if="!model.currentNote || snippets.length == 0" style="opacity:0.2;text-align: center;">
                     <img src="images/noapple.JPG" width="50" alt="no records">
                 </div>
             </div>
