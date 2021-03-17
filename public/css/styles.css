@@ -1,6 +1,8 @@
 /* css custom property */
 :root{
   --content-font-size: 13px;
+  --icon-color-hover: coral;
+  --icon-color: #017075;
 }
 
 @media screen and (min-width: 991px) {
@@ -21,20 +23,24 @@ html, body {
 #notebooks .header img { position: absolute; top: 10px; left: 22px;}
 #notebooks .header h1 { margin-left: 90px; float: left; padding-top: 28px; color: mediumvioletred;}
 #notebooks .header h1::first-letter {color: coral;}
-#notebooks .list-group-item.selected {font-weight: bold;}
-
+#notebooks .notebook {padding: 0.25rem 0.5rem; background-color: inherit; border: 0}
+#notebooks .notebook.selected {font-weight: bold;}
+#notebooks .notebook:hover {color: coral;}
+#notebooks .notebook .count {float:right; font-size:0.8rem;}
+#notebooks .title {margin-left: 0.5rem; margin-bottom: 20px; display: inline-block; color: darkgray; font-weight: bold; font-size: 0.9rem; text-transform: uppercase;  letter-spacing: 0.1rem;}
 #snippets .snippet {border-bottom: 1px solid lightgray; line-height: 1.2rem; font-size:0.95rem; padding-top: 8px; padding-bottom: 7px; max-height: 68px;}
 #snippets .snippet.selected {background-color: #f1f1f1; padding-left: 15px; border-left: 5px solid #ffd000;}
 #snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px;}
 #snippets .header .cmds {position: absolute; right: 10px; top: 10px;}
 #snippet .header .cmds, #snippet .metadata .cmds {float: right;}
-#snippet .header .cmds {margin-top: -5px}
+#snippet .header .cmds {margin-top: -5px;}
 #snippet .header .title {max-width: 390px; display: inline-block; line-height: 1.2rem;  margin-top: -2px;}
 #snippet .header.editing {background-color: #ffd000;}
 
-#snippet .content {padding: 5px; border-bottom:1px solid lightgray; font-size: var(--content-font-size);}
-#snippet .content.description {border-bottom: 1px solid lightgray; background-color: #f5f5f5;}
+#snippet .content {padding: 5px; border-bottom:1px solid lightgray; font-size: var(--content-font-size); box-shadow: 0px 4px 14px -3px lightgray;}
+#snippet .description {padding: 5px; border-bottom: 1px solid lightgray; background-color: #f5f5f5;}
 #snippet .metadata {padding: 5px; height: 44px; background-color: #f1f1f1; border-bottom: 1px solid lightgray;}
+#snippet .metadata .cmds {margin-right: 12 px;}
 
 /* highlighter js has it, so have we to prevent jumping */
 #snippet pre code {padding:0.5em; display: block;};
@@ -52,8 +58,14 @@ html, body {
 
 .btn-xs{ padding: 1px 5px !important; font-size: 12px !important; line-height: 1.5 !important; border-radius: 3px !important; }
 
-.icon {font-size:18px; cursor:pointer; color: #017075;}
+.icon {font-size:18px; cursor:pointer; color: var(--icon-color);}
+.icon:hover {color: var(--icon-color-hover) }
 .header .icon {font-size:22px;}
+/* .header .icon.shadowH:hover {
+  border: 1px solid #fff;
+  border-radius: 100%;
+  box-shadow: 0px 6px 7px -3px #a0b6b7;
+} */
 
 /*highlighter override */
 .hljs { background: #fff;}

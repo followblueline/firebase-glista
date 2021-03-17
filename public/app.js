@@ -45,19 +45,30 @@ var vm = new Vue({
         }
     },
     methods:{
+        createNotebook: function(){
+            let snippet = this.createEmptySnippet();
+            snippet.title = 'dkj444';
+            this.model.notes.push(snippet);
+            this.sortNotes(this.model.notes);  
+        },
         selectNotebook: function(note){
             this.model.currentNote = note;
         },
-        createSnippet: function(){
-            // check if already editing new snippet
-            var snippet = {
+        createEmptySnippet: function(){
+            let snippet = {
                 uid: self.model.user.uid,
                 id: null,
-                parent: self.model.currentNote.id,
+                parent: '',
                 title: '',
                 description: '',
                 tags: []
             };
+            return snippet;
+        },
+        createSnippet: function(){
+            // check if already editing new snippet
+            let snippet = this.createEmptySnippet();
+            snippet.parent = self.model.currentNote.id;
             self.selectSnippet(snippet); // select new snippet
             self.editSnippet(snippet);// immediately open in editor
         },
@@ -110,15 +121,17 @@ var vm = new Vue({
                 }, 100);
             }
         },
-        cloneSnippet: function(){
-            if (this.editingSnippet){
-                this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippetInEditor);
-                this.model.currentSnippetInEditor.id = null;
-                this.model.currentSnippetInEditor.title +=" clone"; 
-            } else if(this.model.currentSnippet) {
-                this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippet);
-                this.model.currentSnippetInEditor.id = null;
-                this.editSnippet(this.model.currentSnippetInEditor);
+        cloneSnippet: function(snippet){
+            if (confirm(`Clone ${snippet.title}?`)){
+                if (this.editingSnippet){
+                    this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippetInEditor);
+                    this.model.currentSnippetInEditor.id = null;
+                    this.model.currentSnippetInEditor.title +=" clone"; 
+                } else if(this.model.currentSnippet) {
+                    this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippet);
+                    this.model.currentSnippetInEditor.id = null;
+                    this.editSnippet(this.model.currentSnippetInEditor);
+                }
             }
         },
         // highlight code in editor
@@ -162,6 +175,7 @@ var vm = new Vue({
                 // update = update, set = insert. set will overwrite whole object if exists
                 docRef.update({
                     title: snippet.title,
+                    parent: snippet.parent,
                     description: snippet.description || '',
                     content: snippet.content || ''
                 })
@@ -176,6 +190,10 @@ var vm = new Vue({
         onSnippetSave: function(error, snippet, msg){
             if (error){
                 console.error(msg || 'Error', error);
+                Vue.$toast.open({
+                    message: 'Error saving snippet.',
+                    type: 'error', // success, info, warning, error, default
+                });
             } else {
                 console.log(msg);
                 // refresh edited item in list with edited values
@@ -192,6 +210,7 @@ var vm = new Vue({
                 this.sortNotes(self.model.notes); // reorder
                 this.editSnippet(null);
                 this.highlightCode(snippet);
+                Vue.$toast.open('Snippet saved.');
             }
         },
         deleteSnippet: function(snippet){
@@ -212,6 +231,12 @@ var vm = new Vue({
                     console.error("Error removing document: ", error);
                 });
             }
+        },
+        moveSnippet: function(parentId){
+            //if (confirm(`Move snippet to ${note.title}?`)){
+                self.model.currentSnippetInEditor.parent = parentId;
+            //    Vue.$toast.open(`Snippet moved to ${note.title}.`);
+            
         },
         onAuthStateChanged: function(user){
           console.log('onAuthStateChanged', user)  
@@ -300,6 +325,9 @@ var vm = new Vue({
             }
             var promise = navigator.clipboard.writeText(text);
             Vue.$toast.open('Content copied to clipboard.');
+        },
+        getChildCount: function(note){
+            return this.model.notes.filter(x => x.parent == note.id).length;
         }
     },
   }).$mount("#app");

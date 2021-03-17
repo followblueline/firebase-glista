@@ -59,21 +59,28 @@
                     <h1>Glista</h1>
                 </div>
                 <div class="clear"></div>
+                
+                <hr>
+                <span class="title">User</span>
                 <div class="user">
                     <p v-if="model.user">{{model.user.displayName}}</p>
                     <p v-if="model.user" class="small">{{model.user.uid}}</p>
-                    <button v-if="model.user" @click="onSignOut" class="btn btn-light">Sign Out</button>
-                    <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-light">Google Sign In</button>
-                    <button v-if="!model.user" @click="onEmailPassSignIn" class="btn btn-light">Email/pass Sign In</button>
+                    <button v-if="model.user" @click="onSignOut" class="btn btn-secondary btn-xs">Sign Out</button>
+                    <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-secondary btn-xs">Google Sign In</button>
+                    <button v-if="!model.user" @click="onEmailPassSignIn" class="btn btn-secondary btn-xs">Email/pass Sign In</button>
                 </div>
                 <div class="clear"></div>
 
+                <hr>
                 <!-- notebook list -->
-                <h2>Folders</h2>
+                <span class="title">Folders</span>
+                <span style="float:right"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Increase font size"></i></span>
+
                 <ul class="list-group list-group-flush">
-                    <li :class="['list-group-item', {selected: note.id == model.currentNote?.id}]" 
-                    v-for="note in filteredNotes" @click="selectNotebook(note)">{{ note.title }}</li>
+                    <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
+                    v-for="note in filteredNotes" @click="selectNotebook(note)">{{ note.title }} <span class="count">{{getChildCount(note)}}</span></li>
                 </ul>
+                <hr>
             </div>
             
             <!-- snippets -->
@@ -118,29 +125,36 @@
                         </template>
                     </div>
                     <div class="metadata">
+                        
                         <template v-if="!editingSnippet">
                             <span class="badge rounded-pill bg-primary">Primary</span>
                             <span class="badge rounded-pill bg-primary">Javascript</span>
                             <span class="badge rounded-pill bg-primary">C#</span>
                          </template>
+
                         <template v-if="editingSnippet">
-                            <select class="form-select" aria-label="Default select example">
+                            <select class="form-select">
                                 <option selected="">Text</option>
                                 <option value="markdown">Markdown</option>
                                 <option value="code">Code</option>
+                            </select>
+                            
+                            <span>in</span>
+                            <select class="form-select" onchange="vm.moveSnippet(this.value)">
+                                <option v-for="note in filteredNotes" :value="note.id" :selected="note.id == model.currentNote.id">{{ note.title }}</option>
                             </select>
                         </template>
 
                         <div class="cmds">
                             <!-- <i class="icon-link"></i> -->
                             <i v-if="model.currentSnippet" @click="copyToClipboard()" class="icon icon-docs" title="Copy to clipboard"></i>
-                            <i v-if="model.currentSnippet" @click="cloneSnippet()" class="icon icon-docs-1" title="Clone snippet"></i>
+                            <i v-if="model.currentSnippet" @click="cloneSnippet(model.currentSnippet)" class="icon icon-docs-1" title="Clone snippet"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-squared-alt" title="Increase font size"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-squared-alt" title="Decrease font size"></i>
                         </div>
                     </div>
 
-                    <div class="content description text-muted" v-if="!editingSnippet && model.currentSnippet?.description?.length > 0">
+                    <div class="description text-muted" v-if="!editingSnippet && model.currentSnippet?.description?.length > 0">
                         <span>{{model.currentSnippet.description}}</span> 
                     </div>
 
@@ -171,6 +185,7 @@
 
         </div>
         <!--div class="row">
+            https://fontello.com/
             <i class="icon-edit"></i>
             <i class="icon-star-empty"></i>
             <i class="icon-star"></i>
