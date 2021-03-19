@@ -74,48 +74,15 @@ var vm = new Vue({
             }
         },
         deleteNotebookConfirm: function(){
-            console.log('confirm');
             this.state.showModalConfirm = true;
         },
         deleteNotebook: function(snippet){
-            console.log('del');
-            // Warning: Deleting a document does not delete its subcollections!
-            dbNotesRef.doc(snippet.id)
-            .delete()
-            .then(() => {
-                // osvjezi UI
-                let itemIndex = self.model.notes.findIndex(x => x.id == snippet.id);
-                self.model.notes.splice(itemIndex,1);
-                self.selectNotebook(null);
-                self.state.showModalConfirm = false;
-                self.editNotebook(null);
-                // doesnt refresh vue UI
-                //_.remove(self.model.notes, function(x) { return x.id == snippet.id});
-                //self.$forceUpdate();
-            }).catch((error) => {
-                console.error("Error removing note: ", error);
-                Vue.$toast.open({
-                    message: 'Error removing note',
-                    type: 'error', // success, info, warning, error, default
-                });
-            });
-        },
-        feedbackOk: function(msg){
-            Vue.$toast.open(msg);
-        },
-        feedbackError: function(error, msg){
-            if (error)
-                console.error(msg || 'Error', error);
-            Vue.$toast.open({
-                message: msg,
-                type: 'error', // success, info, warning, error, default
-            });
-        },
-        deleteBatch: function(id){
-            if(!id) return Promise.reject('No id!');
+            if(!snippet) return Promise.reject('No id!');
+            let parentId = snippet.id;
             // find children
-            let ids = this.model.notes.filter(x => x.parent == id).map(x => x.id);
-            ids.push(id); // add parent
+            let ids = this.model.notes.filter(x => x.parent == parentId).map(x => x.id);
+            ids.push(parentId); // add parent
+            
             let batch = db.batch();
             ids.forEach((id) => {
                 let docRef = dbNotesRef.doc(id);
@@ -123,6 +90,14 @@ var vm = new Vue({
             });
             batch.commit()
             .then(function(){
+                // osvjezi UI
+                ids.forEach( id => {
+                    let itemIndex = self.model.notes.findIndex(x => x.id == id);
+                    self.model.notes.splice(itemIndex,1);
+                });
+                self.selectNotebook(null);
+                self.state.showModalConfirm = false;
+                self.editNotebook(null);
                 self.feedbackOk('Snippets deleted.');
             })
             .catch(function(error){
@@ -465,7 +440,18 @@ var vm = new Vue({
         },
         getChildCount: function(note){
             return this.model.notes.filter(x => x.parent == note.id).length;
-        }
+        },
+        feedbackOk: function(msg){
+            Vue.$toast.open(msg);
+        },
+        feedbackError: function(error, msg){
+            if (error)
+                console.error(msg || 'Error', error);
+            Vue.$toast.open({
+                message: msg,
+                type: 'error', // success, info, warning, error, default
+            });
+        },
     },
   }).$mount("#app");
 
