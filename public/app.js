@@ -239,7 +239,7 @@ var vm = new Vue({
                 lineNumbers: true,
                 tabSize: 4,
                 indentUnit: 4,
-                mode: snippet.lang ? snippet.lang : 'javascript'
+                mode: this.getSnippetEditorLang(snippet)
             });
             this.model.codeMirrorRef.getScrollerElement().style.minHeight = '300px';
             this.model.codeMirrorRef.refresh();
@@ -435,6 +435,24 @@ var vm = new Vue({
         },
         getSnippetLang: function(snippet){
             return snippet && snippet.lang ? snippet.lang : 'autodetect';
+        },
+        getSnippetEditorLang: function(snippet){
+            // mapper to codemirror langs
+            if (!snippet || !snippet.lang)
+                return 'javascript'; // default
+            switch (snippet.lang){
+                case 'autodetect': return 'javascript';
+                case 'plaintext': return 'markdown';
+                case 'markdown': return 'markdown';
+                case 'csharp': return 'clike';
+                case 'javascript': return 'javascript';
+                case 'sql': return 'sql';
+                case 'json': return 'javascript';
+                case 'python': return 'python';
+                case 'css': return 'css';
+                case 'html': return 'htmlmixed';
+            }
+            return 'markdown';
         }
     },
   }).$mount("#app");
