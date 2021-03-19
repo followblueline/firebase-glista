@@ -45,7 +45,11 @@
     <script src="app.js" defer></script>
     <!-- to modify icon selection go to fontello.com, wrench icon >  import config.json from \public\css\fontello folder -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/fontello/fontello.css">
+    <!-- our modal -->
+    <script src="components/modalGeneric.js"></script>
+    <link href="components/modalGeneric.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/css_fontello/fontello.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -70,8 +74,11 @@
                     <button v-if="!model.user" @click="onEmailPassSignIn" class="btn btn-secondary btn-xs">Email/pass Sign In</button>
                 </div>
                 <div class="clear"></div>
-
                 <hr>
+
+                <div v-if="model.currentNote" style="text-align: center; margin-bottom:20px;">
+                    <button class="btn btn-primary" @click="createSnippet" style="width:90%; padding:3px;">New snippet</button>
+                </div>
                 <!-- notebook list -->
                 <span class="title">Folders</span>
                 <span style="float:right"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Increase font size"></i></span>
@@ -85,11 +92,17 @@
             
             <!-- snippets -->
             <div class="col-md-2" id="snippets">
-                <div class="header">Snippets
+                <div class="header">
+                    {{model.currentNote?.title}}
+                    <div class="cmds" v-if="model.currentNote">
+                        <span class="icon" @click="editNotebook(model.currentNote)"><i class="icon-dot-3" alt="Configure" title="Configure" style="transform: rotate(90deg); display:inline-block"></i></span>
+                    </div>
+                </div>
+                <!--div class="header">Snippets
                     <div v-if="model.currentNote" class="cmds">
                         <button class="btn btn-primary btn-xs" @click="createSnippet">Create snippet</button>
                     </div>
-                </div>
+                </div-->
 
                 <ul class="list-group list-group-flush">
                     <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
@@ -162,7 +175,7 @@
                         <template v-if="editingSnippet">
                             <div class="mb-3">
                                 <label for="formTitle" class="form-label">Title</label>
-                                <input type="text" class="form-control" id="formTitle" v-model="model.currentSnippetInEditor.title" maxlength="100" required>
+                                <input type="text" class="form-control" id="formTitle" v-model="model.currentSnippetInEditor.title" :maxlength="config.snippetTitleMaxLength" required  autocomplete="off">
                             </div>
                             <div class="mb-3">
                                 <label for="formDescription" class="form-label">Description</label>
@@ -184,21 +197,42 @@
             </div>
 
         </div>
-        <!--div class="row">
-            https://fontello.com/
-            <i class="icon-edit"></i>
-            <i class="icon-star-empty"></i>
-            <i class="icon-star"></i>
-            <i class="icon-lock"></i>
-            <i class="icon-lock-open"></i>
-            <i class="icon-link"></i>
-            <i class="icon-cancel"></i>
-            <i class="icon-link-ext"></i>
-            <i class="icon-docs"></i>
-            <i class="icon-sort"></i>
-            <i class="icon-paste"></i>
-            <i class="icon-share"></i>
-        </div-->
+
+        <!-- notebook edit -->
+        <modal_note vcloak v-show="state.showModalNote" v-if="model.currentNoteInEditor">
+            <template slot="header">
+                <h1>{{model.currentNoteInEditor.id ? 'Edit note' : 'New note'}}</h1>
+            </template>
+            <template slot="body">
+                <div class="mb-3" style="width:600px">
+                    <label for="noteTitle" class="form-label">Note title</label>
+                    <input ref="noteTitle" v-model="model.currentNoteInEditor.title" type="text" class="form-control" id="noteTitle" :maxlength="config.noteTitleMaxLength" required autocomplete="off">
+                </div>
+            </template>
+            <template slot="footer">
+                <div style="position: relative; text-align: right; width: 100%;">
+                    <button class="btn btn-danger" style="position: absolute; left:0;" @click="deleteNotebookConfirm()" v-show="model?.currentNoteInEditor && model?.currentNoteInEditor?.id">Delete</button>
+                    <button class="btn btn-primary" @click="saveNotebook()">Ok</button>
+                    <button class="btn btn-secondary" @click="editNotebook(null)">Cancel</button>
+                </div>
+            </template>
+        </modal_note>
+
+        <modal_confirm vcloak v-show="state.showModalConfirm">
+            <template slot="header">
+                <h1>Please confirm</h1>
+            </template>
+            <template slot="body">
+                <div class="mb-3" style="width:400px">
+                    <p>Are you sure you want to delete note <strong>{{model.currentNoteInEditor?.title}} </strong> and it's corresponding snippets?</p>
+                </div>
+            </template>
+            <template slot="footer">
+                <button class="btn btn-primary" @click="deleteNotebook(model.currentNoteInEditor)">Ok</button>
+                <button class="btn btn-secondary" @click="state.showModalConfirm = false">Cancel</button>
+            </template>
+        </modal_note>
+
     
     <div class="clear"></div>
 </div>

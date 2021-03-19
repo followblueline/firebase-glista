@@ -7,6 +7,8 @@ const auth = firebase.auth();
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 Vue.use(hljs.vuePlugin);
 Vue.use(VueToast);// https://www.npmjs.com/package/vue-toast-notification
+Vue.component('modal_note', modalGeneric);
+Vue.component('modal_confirm', modalGeneric);
 
 let self;
 var vm = new Vue({
@@ -19,16 +21,23 @@ var vm = new Vue({
       self.adjustViewerFontSize();
     },
     data: {
-      model: {
-          user: null,
-          notes: [], // all notes
-          currentNote: null,
-          currentSnippet: null,
-          currentSnippetInEditor: null, // for edit mode, leave original intact in case of cancellation
-          codeMirrorRef: null, // reference for code mirror, we need it to retrieve non-highlighted editor content before saving
-          notesUsubscribe: null,
+        config: {
+            noteTitleMaxLength: 30,
+            snippetTitleMaxLength: 100
+        },
+        model: {
+            user: null,
+            notes: [], // all notes
+            currentNote: null,
+            currentNoteInEditor: null, // for edit mode
+            currentSnippet: null,
+            currentSnippetInEditor: null, // for edit mode, leave original intact in case of cancellation
+            codeMirrorRef: null, // reference for code mirror, we need it to retrieve non-highlighted editor content before saving
+            notesUsubscribe: null,
       },
       state:{
+          showModalNote: false,
+          showModalConfirm: false
       }
     },
     computed:{
@@ -45,14 +54,135 @@ var vm = new Vue({
         }
     },
     methods:{
-        createNotebook: function(){
-            let snippet = this.createEmptySnippet();
-            snippet.title = 'dkj444';
-            this.model.notes.push(snippet);
-            this.sortNotes(this.model.notes);  
-        },
         selectNotebook: function(note){
             this.model.currentNote = note;
+        },
+        createNotebook: function(){
+            let snippet = this.createEmptySnippet();
+            this.editNotebook(snippet);
+        },
+        editNotebook: function(snippet){
+            if (!snippet){
+                this.model.currentNoteInEditor = null;
+                this.state.showModalNote = false;
+            } else {
+                this.model.currentNoteInEditor = snippet;
+                this.state.showModalNote = true;
+                this.$nextTick(() => this.$refs.noteTitle.focus());
+                //this.model.notes.push(snippet);
+                //this.sortNotes(this.model.notes);  
+            }
+        },
+        deleteNotebookConfirm: function(){
+            console.log('confirm');
+            this.state.showModalConfirm = true;
+        },
+        deleteNotebook: function(snippet){
+            console.log('del');
+            // Warning: Deleting a document does not delete its subcollections!
+            dbNotesRef.doc(snippet.id)
+            .delete()
+            .then(() => {
+                // osvjezi UI
+                let itemIndex = self.model.notes.findIndex(x => x.id == snippet.id);
+                self.model.notes.splice(itemIndex,1);
+                self.selectNotebook(null);
+                self.state.showModalConfirm = false;
+                self.editNotebook(null);
+                // doesnt refresh vue UI
+                //_.remove(self.model.notes, function(x) { return x.id == snippet.id});
+                //self.$forceUpdate();
+            }).catch((error) => {
+                console.error("Error removing note: ", error);
+                Vue.$toast.open({
+                    message: 'Error removing note',
+                    type: 'error', // success, info, warning, error, default
+                });
+            });
+        },
+        feedbackOk: function(msg){
+            Vue.$toast.open(msg);
+        },
+        feedbackError: function(error, msg){
+            if (error)
+                console.error(msg || 'Error', error);
+            Vue.$toast.open({
+                message: msg,
+                type: 'error', // success, info, warning, error, default
+            });
+        },
+        deleteBatch: function(id){
+            if(!id) return Promise.reject('No id!');
+            // find children
+            let ids = this.model.notes.filter(x => x.parent == id).map(x => x.id);
+            ids.push(id); // add parent
+            let batch = db.batch();
+            ids.forEach((id) => {
+                let docRef = dbNotesRef.doc(id);
+                batch.delete(docRef);
+            });
+            batch.commit()
+            .then(function(){
+                self.feedbackOk('Snippets deleted.');
+            })
+            .catch(function(error){
+                this.feedbackError(error, 'Error in batch delete.');
+            });
+        },
+        saveNotebook: function(){
+            var snippet = this.model.currentNoteInEditor;
+            if (!snippet.id){
+                // insert. set will overwrite whole object if exists
+                dbNotesRef.add(
+                    snippet
+                )
+                .then(function(docRef) {
+                    snippet.id = docRef.id; // update id from db
+                    self.onNoteSave(null, snippet, "Note created.")
+                })
+                .catch(function(error) {
+                    self.onNoteSave(error, snippet, "Error creating note.");
+                });
+            } else {
+                // update
+                var docRef = dbNotesRef.doc(snippet.id);
+                // update = update, set = insert. set will overwrite whole object if exists
+                docRef.update({
+                    title: snippet.title,
+                    parent: snippet.parent
+                })
+                .then(function() {
+                    self.onNoteSave(null, snippet, "Note successfully updated.")
+                })
+                .catch((error) => {
+                    self.onNoteSave(error, snippet, "Error updating note.");
+                });
+            }
+        },
+        // feedback and refresh items on screen
+        onNoteSave: function(error, snippet, msg){
+            if (error){
+                console.error(msg || 'Error', error);
+                Vue.$toast.open({
+                    message: 'Error saving note',
+                    type: 'error', // success, info, warning, error, default
+                });
+            } else {
+                // should be loaded from db
+                let created = self.model.currentNote?.id == null || snippet.id != self.model.currentNote?.id; // created or cloned
+                if (!created){
+                    // existing snippet, update valus
+                    //_.merge(self.model.currentNote, snippet);
+                    self.model.currentNote = snippet;
+                } else {
+                    // if snippet was created, append it to snippets list
+                    self.model.notes.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
+                    self.selectNotebook(snippet);
+                }
+                self.sortNotes(self.model.notes); // reorder
+                self.editNotebook(null);
+                Vue.$toast.open('Note saved.');
+            }
         },
         createEmptySnippet: function(){
             let snippet = {
@@ -147,8 +277,14 @@ var vm = new Vue({
             this.model.codeMirrorRef.refresh();
         },
         validateSnippet: function(snippet){
-            // real validation goes here
-            if (snippet.title.length == 0) return false;
+            // TODO: validate
+            if (!snippet.parent){
+                // validate note
+                if (snippet.title.length == 0 || snippet.length > this.config.noteTitleMaxLength) return false;
+            } else {
+                // validate snippet
+                if (snippet.title.length == 0 || snippet.length > this.config.snippetTitleMaxLength) return false;
+            }
             return true;
         },
         saveSnippet: function(){
@@ -163,11 +299,11 @@ var vm = new Vue({
                     snippet
                 )
                 .then(function(docRef) {
-                    snippet.id = docRef.id;
-                    self.onSnippetSave(null, snippet, "Document successfully added")
+                    snippet.id = docRef.id; // update id from db
+                    self.onSnippetSave(null, snippet, "Document successfully added.")
                 })
                 .catch(function(error) {
-                    self.onSnippetSave(error, snippet, "Error adding document");
+                    self.onSnippetSave(error, snippet, "Error adding document.");
                 });
             } else {
                 // update
@@ -180,13 +316,14 @@ var vm = new Vue({
                     content: snippet.content || ''
                 })
                 .then(function() {
-                    self.onSnippetSave(null, snippet, "Document successfully updated!")
+                    self.onSnippetSave(null, snippet, "Document successfully updated.")
                 })
                 .catch((error) => {
-                    self.onSnippetSave(error, snippet, "Error updating document");
+                    self.onSnippetSave(error, snippet, "Error updating document.");
                 });
             }
         },
+        // feedback and refresh items on screen
         onSnippetSave: function(error, snippet, msg){
             if (error){
                 console.error(msg || 'Error', error);
@@ -200,7 +337,7 @@ var vm = new Vue({
                 // should be loaded from db
                 let created = this.model.currentSnippet.id == null || snippet.id != this.model.currentSnippet.id; // created or cloned
                 if (!created){
-                    // existing snippet
+                    // existing snippet, update values
                     _.merge(this.model.currentSnippet, snippet);
                 } else {
                     // if snippet was created, append it to snippets list
@@ -221,7 +358,7 @@ var vm = new Vue({
                 .then(() => {
                     console.log("Document successfully deleted!");
                     // osvjezi UI
-                    var itemIndex = self.model.notes.findIndex(x => x.id == snippet.id);
+                    let itemIndex = self.model.notes.findIndex(x => x.id == snippet.id);
                     self.model.notes.splice(itemIndex,1);
                     self.selectSnippet(null);
                     // doesnt refresh vue UI
