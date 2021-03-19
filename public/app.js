@@ -113,10 +113,10 @@ var vm = new Vue({
                 )
                 .then(function(docRef) {
                     snippet.id = docRef.id; // update id from db
-                    self.onNoteSave(null, snippet, "Note created.")
+                    self.onNoteSave(snippet, "Note created.")
                 })
                 .catch(function(error) {
-                    self.onNoteSave(error, snippet, "Error creating note.");
+                    self.feedbackError(error, "Error creating note.");
                 });
             } else {
                 // update
@@ -127,37 +127,29 @@ var vm = new Vue({
                     parent: snippet.parent
                 })
                 .then(function() {
-                    self.onNoteSave(null, snippet, "Note successfully updated.")
+                    self.onNoteSave(snippet, "Note successfully updated.")
                 })
                 .catch((error) => {
-                    self.onNoteSave(error, snippet, "Error updating note.");
+                    self.feedbackError(error, "Error updating note.");
                 });
             }
         },
         // feedback and refresh items on screen
-        onNoteSave: function(error, snippet, msg){
-            if (error){
-                console.error(msg || 'Error', error);
-                Vue.$toast.open({
-                    message: 'Error saving note',
-                    type: 'error', // success, info, warning, error, default
-                });
+        onNoteSave: function(snippet, msg){
+            // should be loaded from db
+            let created = self.model.currentNote?.id == null || snippet.id != self.model.currentNote?.id; // created or cloned
+            if (!created){
+                // existing snippet, update valus
+                //_.merge(self.model.currentNote, snippet);
+                self.model.currentNote = snippet;
             } else {
-                // should be loaded from db
-                let created = self.model.currentNote?.id == null || snippet.id != self.model.currentNote?.id; // created or cloned
-                if (!created){
-                    // existing snippet, update valus
-                    //_.merge(self.model.currentNote, snippet);
-                    self.model.currentNote = snippet;
-                } else {
-                    // if snippet was created, append it to snippets list
-                    self.model.notes.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
-                    self.selectNotebook(snippet);
-                }
-                self.sortNotes(self.model.notes); // reorder
-                self.editNotebook(null);
-                Vue.$toast.open('Note saved.');
+                // if snippet was created, append it to snippets list
+                self.model.notes.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
+                self.selectNotebook(snippet);
             }
+            self.sortNotes(self.model.notes); // reorder
+            self.editNotebook(null);
+            self.feedbackOk('Note save.');
         },
         createEmptySnippet: function(){
             let snippet = {
@@ -275,10 +267,10 @@ var vm = new Vue({
                 )
                 .then(function(docRef) {
                     snippet.id = docRef.id; // update id from db
-                    self.onSnippetSave(null, snippet, "Document successfully added.")
+                    self.onSnippetSave(snippet, "Document successfully added.")
                 })
                 .catch(function(error) {
-                    self.onSnippetSave(error, snippet, "Error adding document.");
+                    self.feedbackError(error, "Error adding document.");
                 });
             } else {
                 // update
@@ -291,39 +283,30 @@ var vm = new Vue({
                     content: snippet.content || ''
                 })
                 .then(function() {
-                    self.onSnippetSave(null, snippet, "Document successfully updated.")
+                    self.onSnippetSave(snippet, "Document successfully updated.")
                 })
                 .catch((error) => {
-                    self.onSnippetSave(error, snippet, "Error updating document.");
+                    self.feedbackError(error, "Error updating document.");
                 });
             }
         },
         // feedback and refresh items on screen
-        onSnippetSave: function(error, snippet, msg){
-            if (error){
-                console.error(msg || 'Error', error);
-                Vue.$toast.open({
-                    message: 'Error saving snippet.',
-                    type: 'error', // success, info, warning, error, default
-                });
+        onSnippetSave: function(snippet, msg){
+            // refresh edited item in list with edited values
+            // should be loaded from db
+            let created = this.model.currentSnippet.id == null || snippet.id != this.model.currentSnippet.id; // created or cloned
+            if (!created){
+                // existing snippet, update values
+                _.merge(this.model.currentSnippet, snippet);
             } else {
-                console.log(msg);
-                // refresh edited item in list with edited values
-                // should be loaded from db
-                let created = this.model.currentSnippet.id == null || snippet.id != this.model.currentSnippet.id; // created or cloned
-                if (!created){
-                    // existing snippet, update values
-                    _.merge(this.model.currentSnippet, snippet);
-                } else {
-                    // if snippet was created, append it to snippets list
-                    self.model.notes.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
-                    this.selectSnippet(snippet);// select clone
-                }
-                this.sortNotes(self.model.notes); // reorder
-                this.editSnippet(null);
-                this.highlightCode(snippet);
-                Vue.$toast.open('Snippet saved.');
+                // if snippet was created, append it to snippets list
+                self.model.notes.unshift(snippet); // insert snippet to other notes snippets at the beginning of the array
+                this.selectSnippet(snippet);// select clone
             }
+            this.sortNotes(self.model.notes); // reorder
+            this.editSnippet(null);
+            this.highlightCode(snippet);
+            self.feedbackOk('Snippet saved.');
         },
         deleteSnippet: function(snippet){
             // Warning: Deleting a document does not delete its subcollections!
@@ -331,7 +314,6 @@ var vm = new Vue({
                 dbNotesRef.doc(snippet.id)
                 .delete()
                 .then(() => {
-                    console.log("Document successfully deleted!");
                     // osvjezi UI
                     let itemIndex = self.model.notes.findIndex(x => x.id == snippet.id);
                     self.model.notes.splice(itemIndex,1);
@@ -339,16 +321,14 @@ var vm = new Vue({
                     // doesnt refresh vue UI
                     //_.remove(self.model.notes, function(x) { return x.id == snippet.id});
                     //self.$forceUpdate();
+                    self.feedbackOk('Snippet deleted.');
                 }).catch((error) => {
-                    console.error("Error removing document: ", error);
+                    self.feedbackError(error, "Error removing document");
                 });
             }
         },
         moveSnippet: function(parentId){
-            //if (confirm(`Move snippet to ${note.title}?`)){
-                self.model.currentSnippetInEditor.parent = parentId;
-            //    Vue.$toast.open(`Snippet moved to ${note.title}.`);
-            
+            self.model.currentSnippetInEditor.parent = parentId;
         },
         onAuthStateChanged: function(user){
           console.log('onAuthStateChanged', user)  
@@ -361,7 +341,6 @@ var vm = new Vue({
         },
         loadNotes: function(user){
             let self = this;
-            console.log('loadNotes');
             // https://firebase.google.com/docs/firestore/query-data/get-data
             // Database Reference
             collNotes = dbNotesRef
@@ -381,7 +360,7 @@ var vm = new Vue({
                 self.model.notes = this.sortNotes(items);// arrayToTree(items);
             })
             .catch((error) => {
-                console.log("Error getting documents: ", error);
+                self.feedbackError(error, "Error getting documents.");
             });
         },
         sortNotes: function(notes){
@@ -436,7 +415,7 @@ var vm = new Vue({
                 text = vm.model.currentSnippet.content
             }
             var promise = navigator.clipboard.writeText(text);
-            Vue.$toast.open('Content copied to clipboard.');
+            self.feedbackOk('Content copied to clipboard.');
         },
         getChildCount: function(note){
             return this.model.notes.filter(x => x.parent == note.id).length;
