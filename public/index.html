@@ -206,7 +206,7 @@
             <template slot="body">
                 <div class="mb-3" style="width:600px">
                     <label for="noteTitle" class="form-label">Note title</label>
-                    <input ref="noteTitle" v-model="model.currentNoteInEditor.title" type="text" class="form-control" id="noteTitle" :maxlength="config.noteTitleMaxLength" required autocomplete="off">
+                    <input ref="noteTitle" v-model="model.currentNoteInEditor.title" v-on:keyup.enter="saveNotebook()" type="text" class="form-control" id="noteTitle" :maxlength="config.noteTitleMaxLength" required autocomplete="off">
                 </div>
             </template>
             <template slot="footer">
