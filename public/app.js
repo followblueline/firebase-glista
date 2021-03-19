@@ -9,6 +9,7 @@ Vue.use(hljs.vuePlugin);
 Vue.use(VueToast);// https://www.npmjs.com/package/vue-toast-notification
 Vue.component('modal_note', modalGeneric);
 Vue.component('modal_confirm', modalGeneric);
+let htmlConverter = new showdown.Converter({literalMidWordUnderscores: true, tables: true,noHeaderId: false, openLinksInNewWindow: true});
 
 let self;
 var vm = new Vue({
@@ -23,7 +24,10 @@ var vm = new Vue({
     data: {
         config: {
             noteTitleMaxLength: 30,
-            snippetTitleMaxLength: 100
+            snippetTitleMaxLength: 100,
+            lang: {
+                markdown: 'markdown'
+            }
         },
         model: {
             user: null,
@@ -178,7 +182,11 @@ var vm = new Vue({
             if (snippet){
                 this.$nextTick().then(() => {
                     this.model.currentSnippet = snippet;
-                    this.highlightCode(snippet);
+                    if (snippet.lang == this.config.lang.markdown){
+                        
+                    }else {
+                        this.highlightCode(snippet);
+                    }
                 });
             }
         },

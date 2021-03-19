@@ -43,6 +43,8 @@
     <!--toast notification -->
     <script src="https://cdn.jsdelivr.net/npm/vue-toast-notification"></script>
     <link href="https://cdn.jsdelivr.net/npm/vue-toast-notification/dist/theme-sugar.css" rel="stylesheet">
+    <!-- markdown converter -->
+    <script src="scripts/showdown.min.js"></script>
 
     <script src="app.js" defer></script>
     <!-- to modify icon selection go to fontello.com, wrench icon >  import config.json from \public\css\fontello folder -->
@@ -115,7 +117,7 @@
                 </div>
             </div>
 
-            <!-- current snippet editor -->
+            <!-- current snippet presentation & editor -->
             <div class="col-lg-8" id="snippet">
                 <!-- prevent submit, vue will do the job -->
                 <form v-on:submit.prevent>
@@ -199,7 +201,12 @@
                         <!-- https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md -->
                         <!-- plaintext, csharp, javascript/js, json, java, sql, python, css -->
                         <template v-else>
-                            <pre><code :class="getSnippetLang(model.currentSnippet)">{{model.currentSnippet.content}}</code></pre>
+                            <template v-if="model.currentSnippet.lang == config.lang.markdown">
+                                <div style="padding:0.5em;" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
+                            </template>
+                            <template v-else>
+                                <pre><code :class="getSnippetLang(model.currentSnippet)">{{model.currentSnippet.content}}</code></pre>
+                            </template>
                         </template>
                     </div>
                 </form>
