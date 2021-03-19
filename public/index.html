@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="scripts/highlight/styles/github.css">
     <script src="scripts/highlight/highlight.pack.js"></script>
     <!-- codemirror text editor -->
+    <!-- for more https://www.jsdelivr.com/package/npm/codemirror?path=mode -->
     <script src="scripts/codemirror/codemirror.min.js"></script>
     <link rel="stylesheet" href="scripts/codemirror/codemirror.min.css">
     <script src="scripts/codemirror/javascript.js"></script>
@@ -146,10 +147,16 @@
                          </template>
 
                         <template v-if="editingSnippet">
-                            <select class="form-select">
-                                <option selected="">Text</option>
+                            <select class="form-select" v-model="model.currentSnippetInEditor.lang">
+                                <option selected="autodetect">Autodetect</option>
+                                <option selected="plaintext">Text</option>
                                 <option value="markdown">Markdown</option>
-                                <option value="code">Code</option>
+                                <option value="csharp">C#</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="sql">SQL</option>
+                                <option value="json">JSON</option>
+                                <option value="python">Python</option>
+                                <option value="css">CSS</option>
                             </select>
                             
                             <span>in</span>
@@ -190,7 +197,7 @@
                         <!-- https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md -->
                         <!-- plaintext, csharp, javascript/js, json, java, sql, python, css -->
                         <template v-else>
-                            <pre><code class="autodetect">{{model.currentSnippet.content}}</code></pre>
+                            <pre><code :class="getSnippetLang(model.currentSnippet)">{{model.currentSnippet.content}}</code></pre>
                         </template>
                     </div>
                 </form>

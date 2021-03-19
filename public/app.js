@@ -158,6 +158,7 @@ var vm = new Vue({
                 parent: '',
                 title: '',
                 description: '',
+                lang: '',
                 tags: []
             };
             return snippet;
@@ -238,7 +239,7 @@ var vm = new Vue({
                 lineNumbers: true,
                 tabSize: 4,
                 indentUnit: 4,
-                mode: 'javascript'
+                mode: snippet.lang ? snippet.lang : 'javascript'
             });
             this.model.codeMirrorRef.getScrollerElement().style.minHeight = '300px';
             this.model.codeMirrorRef.refresh();
@@ -280,6 +281,7 @@ var vm = new Vue({
                     title: snippet.title,
                     parent: snippet.parent,
                     description: snippet.description || '',
+                    lang: snippet.lang || '',
                     content: snippet.content || ''
                 })
                 .then(function() {
@@ -431,6 +433,9 @@ var vm = new Vue({
                 type: 'error', // success, info, warning, error, default
             });
         },
+        getSnippetLang: function(snippet){
+            return snippet && snippet.lang ? snippet.lang : 'autodetect';
+        }
     },
   }).$mount("#app");
 
