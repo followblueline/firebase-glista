@@ -202,7 +202,7 @@
                         <!-- plaintext, csharp, javascript/js, json, java, sql, python, css -->
                         <template v-else>
                             <template v-if="model.currentSnippet.lang == config.lang.markdown">
-                                <div style="padding:0.5em;" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
+                                <div class="markdown" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
                             </template>
                             <template v-else>
                                 <pre><code :class="getSnippetLang(model.currentSnippet)">{{model.currentSnippet.content}}</code></pre>
