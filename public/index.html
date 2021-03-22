@@ -150,6 +150,7 @@
                          </template>
 
                         <template v-if="editingSnippet">
+                            <span>Language</span>
                             <select class="form-select" v-model="model.currentSnippetInEditor.lang">
                                 <option selected="autodetect">Autodetect</option>
                                 <option selected="plaintext">Text</option>
