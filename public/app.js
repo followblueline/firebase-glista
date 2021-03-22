@@ -224,6 +224,8 @@ var vm = new Vue({
                 //});
                 setTimeout(() => {
                     self.loadCodeEditor(snippet);
+                    this.$nextTick(() => this.$refs.formTitle.focus());
+
                 }, 100);
             }
         },
