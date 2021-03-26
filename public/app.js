@@ -38,6 +38,8 @@ var vm = new Vue({
             currentSnippetInEditor: null, // for edit mode, leave original intact in case of cancellation
             codeMirrorRef: null, // reference for code mirror, we need it to retrieve non-highlighted editor content before saving
             notesUsubscribe: null,
+            searchText: null, // search text
+            searchResults: null
       },
       state:{
           showModalNote: false,
@@ -59,6 +61,7 @@ var vm = new Vue({
     },
     methods:{
         selectNotebook: function(note){
+            this.model.searchResults = null; // reset
             this.model.currentNote = note;
         },
         createNotebook: function(){
@@ -217,7 +220,7 @@ var vm = new Vue({
                 this.model.currentSnippetInEditor = null; // cancel btn
                 this.highlightCode(this.model.currentSnippet); // cancel btn
             } else {
-                this.model.currentSnippetInEditor = _.cloneDeep(snippet); // edit
+                this.model.currentSnippetInEditor = this.cloneDeep(snippet) // edit
                 //vm.$forceUpdate();
                 //vm.$nextTick().then(() => {
                 //this.loadCodeEditor(snippet);
@@ -232,11 +235,11 @@ var vm = new Vue({
         cloneSnippet: function(snippet){
             if (confirm(`Clone ${snippet.title}?`)){
                 if (this.editingSnippet){
-                    this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippetInEditor);
+                    this.model.currentSnippetInEditor = this.cloneDeep(this.model.currentSnippetInEditor);
                     this.model.currentSnippetInEditor.id = null;
                     this.model.currentSnippetInEditor.title +=" clone"; 
                 } else if(this.model.currentSnippet) {
-                    this.model.currentSnippetInEditor = _.cloneDeep(this.model.currentSnippet);
+                    this.model.currentSnippetInEditor = this.cloneDeep(this.model.currentSnippet);
                     this.model.currentSnippetInEditor.id = null;
                     this.editSnippet(this.model.currentSnippetInEditor);
                 }
@@ -463,6 +466,37 @@ var vm = new Vue({
                 case 'html': return 'htmlmixed';
             }
             return 'markdown';
+        },
+        cloneDeep: function(obj){
+            return _.cloneDeep(obj);
+        },
+        runSearch: function(){
+            console.log('search', this.model.searchText);
+            let text = this.model.searchText;
+            let resContainer = this.createEmptySnippet();
+            resContainer.id = 'searchTmp';
+            resContainer.title = 'Search results';
+            let res = [];
+            let titles = []; // text found in title
+            let contents = []; // text found in content
+            for(let i=0,j=this.model.notes.length;i<j;i++){
+                if (this.model.notes[i].title && this.model.notes[i].title.indexOf(text) > -1){
+                    let snippet = this.cloneDeep(this.model.notes[i]);
+                    snippet.parent = resContainer.id;
+                    titles.push(snippet);
+                } else if (this.model.notes[i].content && this.model.notes[i].content.indexOf(text) > -1) {
+                    let snippet = this.cloneDeep(this.model.notes[i]);
+                    snippet.parent = resContainer.id;
+                    contents.push(this.model.notes[i]);
+                }
+            }
+            res.push(...titles);
+            res.push(...contents);
+            this.selectNotebook(resContainer);
+            if (res.length > 0)
+                this.model.searchResults = res;
+            else
+                this.feedbackError(null, 'No results for ' + text);
         }
     },
   }).$mount("#app");

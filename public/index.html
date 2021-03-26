@@ -80,6 +80,11 @@
                 <div class="clear"></div>
                 <hr>
 
+                <div class="search">
+                    <input type="text" v-model="model.searchText" @blur="runSearch" @keyup.enter="runSearch" id="search" maxlength="100" autocomplete="off" class="form-control" placeholder="Search">
+                </div>
+                <hr>
+
                 <div v-if="model.currentNote" style="text-align: center; margin-bottom:20px;">
                     <button class="btn btn-primary" @click="createSnippet" style="width:90%; padding:3px;">New snippet</button>
                 </div>
@@ -111,6 +116,8 @@
                 <ul class="list-group list-group-flush">
                     <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
                         v-for="snippet in filteredSnippets" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
+                    <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
+                        v-for="snippet in model.searchResults" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
                 </ul>
                 <div v-if="!model.currentNote || snippets.length == 0" style="opacity:0.2;text-align: center;">
                     <img src="images/noapple.JPG" width="50" alt="no records">
