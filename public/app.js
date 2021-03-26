@@ -352,6 +352,8 @@ var vm = new Vue({
               this.loadNotes(user);
           } else {
               this.model.user = null;
+              // reset
+              this.model.notes = [];
           }
         },
         loadNotes: function(user){
@@ -471,8 +473,9 @@ var vm = new Vue({
             return _.cloneDeep(obj);
         },
         runSearch: function(){
-            console.log('search', this.model.searchText);
-            let text = this.model.searchText;
+            if (this.model.searchText.length == 0) return;
+            let text = this.model.searchText.toLowerCase();
+            // put search results under virtual note
             let resContainer = this.createEmptySnippet();
             resContainer.id = 'searchTmp';
             resContainer.title = 'Search results';
@@ -480,11 +483,11 @@ var vm = new Vue({
             let titles = []; // text found in title
             let contents = []; // text found in content
             for(let i=0,j=this.model.notes.length;i<j;i++){
-                if (this.model.notes[i].title && this.model.notes[i].title.indexOf(text) > -1){
+                if (this.model.notes[i].title && this.model.notes[i].title.toLowerCase().indexOf(text) > -1){
                     let snippet = this.cloneDeep(this.model.notes[i]);
                     snippet.parent = resContainer.id;
                     titles.push(snippet);
-                } else if (this.model.notes[i].content && this.model.notes[i].content.indexOf(text) > -1) {
+                } else if (this.model.notes[i].content && this.model.notes[i].content.toLowerCase().indexOf(text) > -1) {
                     let snippet = this.cloneDeep(this.model.notes[i]);
                     snippet.parent = resContainer.id;
                     contents.push(this.model.notes[i]);

@@ -68,11 +68,12 @@
                 </div>
                 <div class="clear"></div>
                 
-                <hr>
-                <span class="title">User</span>
+                <!--span class="title">User</span-->
                 <div class="user">
-                    <p v-if="model.user">{{model.user.displayName}}</p>
-                    <p v-if="model.user" class="small">{{model.user.uid}}</p>
+                    <span class="name" v-if="model.user">{{model.user.displayName}}</span>
+                    <!--
+                        <p v-if="model.user" class="small">{{model.user.uid}}</p>
+                    -->
                     <button v-if="model.user" @click="onSignOut" class="btn btn-secondary btn-xs">Sign Out</button>
                     <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-secondary btn-xs">Google Sign In</button>
                     <button v-if="!model.user" @click="onEmailPassSignIn" class="btn btn-secondary btn-xs">Email/pass Sign In</button>
@@ -81,7 +82,7 @@
                 <hr>
 
                 <div class="search">
-                    <input type="text" v-model="model.searchText" @blur="runSearch" @keyup.enter="runSearch" id="search" maxlength="100" autocomplete="off" class="form-control" placeholder="Search">
+                    <input type="text" v-model="model.searchText" @blur="runSearch" @keyup.enter="runSearch" id="search" maxlength="100" autocomplete="off" class="form-control form-control-sm" placeholder="Search">
                 </div>
                 <hr>
 
@@ -90,7 +91,7 @@
                 </div>
                 <!-- notebook list -->
                 <span class="title">Folders</span>
-                <span style="float:right"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Increase font size"></i></span>
+                <span style="float:right" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Increase font size"></i></span>
 
                 <ul class="list-group list-group-flush">
                     <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
@@ -100,7 +101,7 @@
             </div>
             
             <!-- snippets -->
-            <div class="col-md-2" id="snippets">
+            <div class="col-md-2" id="snippets" v-if="model.user">
                 <div class="header">
                     {{model.currentNote?.title}}
                     <div class="cmds" v-if="model.currentNote">
@@ -125,7 +126,7 @@
             </div>
 
             <!-- current snippet presentation & editor -->
-            <div class="col-lg-8" id="snippet">
+            <div class="col-lg-8" id="snippet" v-if="model.user">
                 <!-- prevent submit, vue will do the job -->
                 <form v-on:submit.prevent>
                     <div :class="['header', {editing: editingSnippet}]">
@@ -223,7 +224,7 @@
         </div>
 
         <!-- notebook edit -->
-        <modal_note vcloak v-show="state.showModalNote" v-if="model.currentNoteInEditor">
+        <modal_note vcloak v-show="state.showModalNote" v-if="model.user && model.currentNoteInEditor">
             <template slot="header">
                 <h1>{{model.currentNoteInEditor.id ? 'Edit note' : 'New note'}}</h1>
             </template>

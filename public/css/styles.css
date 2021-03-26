@@ -63,7 +63,8 @@ html, body {
 /* highlighter js has it, so have we to prevent jumping */
 #snippet pre code {padding:0.5em; display: block;};
 
-.user {margin-bottom: 50px;}
+.user {margin-bottom: 20px; text-align: center;}
+.user .name {display:inline-block; margin-left: 10px;}
 
 .clear {clear: both;}
 
