@@ -149,7 +149,7 @@
                             </template>
                         </template>
                     </div>
-                    <div class="metadata">
+                    <div :class="['metadata', {editing: editingSnippet}]">
                         
                         <template v-if="!editingSnippet">
                             <!--<span class="badge rounded-pill bg-primary">Primary</span>
