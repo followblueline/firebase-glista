@@ -19,14 +19,21 @@ var vm = new Vue({
     created: function(){
       self = this; // preserve this scope for async functions
       console.log("vue created");
-      self.adjustViewerFontSize();
+      // load defaults
+      self.loadStatesFromStorage();
     },
     data: {
         config: {
             noteTitleMaxLength: 30,
             snippetTitleMaxLength: 100,
+        },
+        enums: {
             lang: {
                 markdown: 'markdown'
+            },
+            storage: {
+                viewerFontSize: 'viewerFontSize',
+                showZebraStripes: 'showZebraStripes'
             }
         },
         model: {
@@ -186,7 +193,7 @@ var vm = new Vue({
             if (snippet){
                 this.$nextTick().then(() => {
                     this.model.currentSnippet = snippet;
-                    if (snippet.lang == this.config.lang.markdown){
+                    if (snippet.lang == this.enums.lang.markdown){
                         
                     }else {
                         this.highlightCode(snippet);
@@ -406,8 +413,8 @@ var vm = new Vue({
         adjustViewerFontSize: function(sizeAdjustment){
             // check if we have saved size
             let newSize = null;
-            if (!sizeAdjustment && localStorage.getItem('viewerFontSize') != null){
-                newSize = parseInt(localStorage.getItem('viewerFontSize'));
+            if (!sizeAdjustment && localStorage.getItem(this.enums.storage.viewerFontSize) != null){
+                newSize = parseInt(localStorage.getItem(this.enums.storage.viewerFontSize));
             }
             if (!sizeAdjustment && !newSize) return;
             
@@ -424,6 +431,12 @@ var vm = new Vue({
                 document.documentElement.style.setProperty("--viewer-code-striped-height", Math.floor(Math.floor(newSize * 1.4) * 4) + 'px');// 1.4 == line height
                 localStorage.setItem('viewerFontSize', newSize); // remember
             }
+        },
+        loadStatesFromStorage: function(){
+            this.adjustViewerFontSize();
+
+            if (localStorage.getItem(this.enums.storage.showZebraStripes) != null)
+                this.state.showZebraStripes = localStorage.getItem(this.enums.storage.showZebraStripes).toLowerCase() == "true";
         },
         copyToClipboard: function(){
             let text = '';
@@ -504,6 +517,7 @@ var vm = new Vue({
         },
         toggleZebraStripes: function(){
             this.state.showZebraStripes = !this.state.showZebraStripes;
+            localStorage.setItem(this.enums.storage.showZebraStripes, this.state.showZebraStripes);
         }
     },
   }).$mount("#app");

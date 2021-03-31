@@ -212,7 +212,7 @@
                         <!-- https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md -->
                         <!-- plaintext, csharp, javascript/js, json, java, sql, python, css -->
                         <template v-else>
-                            <template v-if="model.currentSnippet.lang == config.lang.markdown">
+                            <template v-if="model.currentSnippet.lang == enums.lang.markdown">
                                 <!-- markdown is not handled through highlightjs-->
                                 <div class="markdown" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
                             </template>
