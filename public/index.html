@@ -81,7 +81,7 @@
                 <div class="clear"></div>
                 <hr>
 
-                <div class="search">
+                <div class="search" v-if="model.user">
                     <input type="text" v-model="model.searchText" @blur="runSearch" @keyup.enter="runSearch" id="search" maxlength="100" autocomplete="off" class="form-control form-control-sm" placeholder="Search">
                 </div>
                 <hr>
@@ -89,15 +89,18 @@
                 <div v-if="model.currentNote" style="text-align: center; margin-bottom:20px;">
                     <button class="btn btn-primary" @click="createSnippet" style="width:90%; padding:3px;">New snippet</button>
                 </div>
+                
                 <!-- notebook list -->
-                <span class="title">Folders</span>
-                <span style="float:right" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Create folder"></i></span>
-
-                <ul class="list-group list-group-flush">
-                    <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
-                    v-for="note in filteredNotes" @click="selectNotebook(note)">{{ note.title }} <span class="count">{{getChildCount(note)}}</span></li>
-                </ul>
-                <hr>
+                <div v-if="model.user">
+                    <span class="title">Folders</span>
+                    <span style="float:right" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Create folder"></i></span>
+                    
+                    <ul class="list-group list-group-flush">
+                        <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
+                        v-for="note in filteredNotes" @click="selectNotebook(note)">{{ note.title }} <span class="count">{{getChildCount(note)}}</span></li>
+                    </ul>
+                    <hr>
+                </div>
             </div>
             
             <!-- snippets -->
@@ -129,13 +132,13 @@
             <div class="col-lg-8" id="snippet" v-if="model.user">
                 <!-- prevent submit, vue will do the job -->
                 <form v-on:submit.prevent>
-                    <div :class="['header', {editing: editingSnippet}]">
+                    <div :class="['header', {'editing': editingSnippet}]">
                         <template v-if="model.currentSnippet">
                             <template v-if="editingSnippet">
                                 <span class="title">{{model.currentSnippet.id == 0 ? 'New snippet' : 'Edit snippet'}}</span>
                                 <div v-if="editingSnippet" class="cmds">
-                                    <button class="btn btn-secondary" @click="editSnippet()" type="button">Cancel</button>
-                                    <button class="btn btn-primary" @click="saveSnippet()" type="submit">Save</button>
+                                    <button class="btn btn-shadow btn-secondary" @click="editSnippet()" type="button">Cancel</button>
+                                    <button class="btn btn-shadow btn-primary" @click="saveSnippet()" type="submit">Save</button>
                                 </div>
                             </template>
 
@@ -239,9 +242,9 @@
             </template>
             <template slot="footer">
                 <div style="position: relative; text-align: right; width: 100%;">
-                    <button class="btn btn-danger" style="position: absolute; left:0;" @click="deleteNotebookConfirm()" v-show="model?.currentNoteInEditor && model?.currentNoteInEditor?.id">Delete</button>
-                    <button class="btn btn-primary" @click="saveNotebook()">Ok</button>
-                    <button class="btn btn-secondary" @click="editNotebook(null)">Cancel</button>
+                    <button class="btn btn-shadow btn-danger" style="position: absolute; left:0;" @click="deleteNotebookConfirm()" v-show="model?.currentNoteInEditor && model?.currentNoteInEditor?.id">Delete</button>
+                    <button class="btn btn-shadow btn-primary" @click="saveNotebook()">Ok</button>
+                    <button class="btn btn-shadow btn-secondary" @click="editNotebook(null)">Cancel</button>
                 </div>
             </template>
         </modal_note>
@@ -256,8 +259,8 @@
                 </div>
             </template>
             <template slot="footer">
-                <button class="btn btn-primary" @click="deleteNotebook(model.currentNoteInEditor)">Ok</button>
-                <button class="btn btn-secondary" @click="state.showModalConfirm = false">Cancel</button>
+                <button class="btn btn-shadow btn-primary" @click="deleteNotebook(model.currentNoteInEditor)">Ok</button>
+                <button class="btn btn-shadow btn-secondary" @click="state.showModalConfirm = false">Cancel</button>
             </template>
         </modal_note>
 
