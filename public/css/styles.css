@@ -48,24 +48,6 @@ html, body {
 #snippet .metadata.editing {margin-top:50px;}
 #snippet .metadata .cmds {margin-right:12 px; margin-top: -2px;}
 
-#snippet .content {padding: 5px; border-bottom:1px solid lightgray; font-size: var(--content-font-size); box-shadow: 0px 4px 14px -3px lightgray;}
-
-/* markdown styling */
-#snippet .content .markdown {padding:0.5em;}
-#snippet .content .markdown h1 {font-size: 2rem}
-#snippet .content .markdown h2 {font-size: 1.55rem}
-#snippet .content .markdown h3 {font-size: 1.2rem}
-#snippet .content .markdown table {margin-bottom: 10px;}
-#snippet .content .markdown table, #snippet .content .markdown table th, #snippet .content .markdown table td {border: 1px solid #999;}
-#snippet .content .markdown table th, #snippet .content .markdown table td {padding: 5px;}
-#snippet .content .markdown table tbody tr:nth-child(odd) { background-color: #fff;}
-#snippet .content .markdown table tbody tr:nth-child(even) { background-color: #f4f4f4;}
-#snippet .content .markdown blockquote { background-color: #f4f4f4; padding: 5px; border-left: 10px solid #e4e4e4; }
-#snippet .content .markdown blockquote p{margin:0.5rem 0 0.5rem 0;}
-#snippet .content .markdown pre code { background-color: #f4f4f4; padding: 5px; }
-
-/* highlighter js has it, so have we to prevent jumping */
-#snippet pre code {padding:0.5em; display: block;};
 
 .user {margin-bottom: 20px; text-align: center;}
 .user .name {display:inline-block; margin-left: 10px;}
@@ -92,10 +74,25 @@ html, body {
 
 
 
+/* markdown styling */
+#snippet .content .markdown {padding:0.5em;}
+#snippet .content .markdown h1 {font-size: 2rem}
+#snippet .content .markdown h2 {font-size: 1.55rem}
+#snippet .content .markdown h3 {font-size: 1.2rem}
+#snippet .content .markdown table {margin-bottom: 10px;}
+#snippet .content .markdown table, #snippet .content .markdown table th, #snippet .content .markdown table td {border: 1px solid #999;}
+#snippet .content .markdown table th, #snippet .content .markdown table td {padding: 5px;}
+#snippet .content .markdown table tbody tr:nth-child(odd) { background-color: #fff;}
+#snippet .content .markdown table tbody tr:nth-child(even) { background-color: #f4f4f4;}
+#snippet .content .markdown blockquote { background-color: #f4f4f4; padding: 5px; border-left: 10px solid #e4e4e4; }
+#snippet .content .markdown blockquote p{margin:0.5rem 0 0.5rem 0;}
+#snippet .content .markdown pre code { background-color: #f4f4f4; padding: 5px; }
+
+
 /* highlighter viewer overrides */
-.hljs { background: #fff;}
-#snippet .content pre, #snippet .content code {font-size:inherit;}
-#snippet pre code { padding: 0 0.5em;}
+#snippet .content {padding: 5px; border-bottom:1px solid lightgray; font-size: var(--content-font-size); box-shadow: 0px 4px 14px -3px lightgray;}
+/* highlighter js has it, so have we to prevent jumping */
+#snippet pre code { display:block; padding: 0 0.5em; background-color: #fff; font-size: var(--content-font-size); }
 #snippet pre code.hljs.plaintext {word-wrap: break-word; white-space: pre-wrap;}
 #snippet pre code.hljs.javascript, 
 #snippet pre code.csharp, 
