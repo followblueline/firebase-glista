@@ -91,7 +91,7 @@
                 </div>
                 <!-- notebook list -->
                 <span class="title">Folders</span>
-                <span style="float:right" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Increase font size"></i></span>
+                <span style="float:right" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Create folder"></i></span>
 
                 <ul class="list-group list-group-flush">
                     <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
@@ -160,8 +160,8 @@
                         <template v-if="editingSnippet">
                             <span>Language</span>
                             <select class="form-select" v-model="model.currentSnippetInEditor.lang">
-                                <option selected="autodetect">Autodetect</option>
-                                <option selected="plaintext">Text</option>
+                                <option value="autodetect">Autodetect</option>
+                                <option value="plaintext">Text</option>
                                 <option value="markdown">Markdown</option>
                                 <option value="csharp">C#</option>
                                 <option value="javascript">JavaScript</option>
@@ -180,8 +180,9 @@
 
                         <div class="cmds">
                             <!-- <i class="icon-link"></i> -->
-                            <i v-if="model.currentSnippet" @click="copyToClipboard()" class="icon icon-docs" title="Copy to clipboard"></i>
-                            <i v-if="model.currentSnippet" @click="cloneSnippet(model.currentSnippet)" class="icon icon-docs-1" title="Clone snippet"></i>
+                            <i v-if="model.currentSnippet" @click="copyToClipboard()" class="icon icon-clipboard" title="Copy to clipboard"></i>
+                            <i v-if="model.currentSnippet" @click="cloneSnippet(model.currentSnippet)" class="icon icon-docs" title="Clone snippet"></i>
+                            <i v-if="model.currentSnippet && !editingSnippet" @click="toggleZebraStripes()" :class="['icon', 'icon-menu', {selected: state.showZebraStripes }]" title="Show zebra stripes for code"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-squared-alt" title="Increase font size"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-squared-alt" title="Decrease font size"></i>
                         </div>
@@ -191,7 +192,7 @@
                         <span>{{model.currentSnippet.description}}</span> 
                     </div>
 
-                    <div class="content" v-if="model.currentSnippet">
+                    <div  v-if="model.currentSnippet" class="content">
                         <template v-if="editingSnippet">
                             <div class="mb-3">
                                 <label for="formTitle" class="form-label">Title</label>
@@ -206,15 +207,17 @@
                                 <textarea class="form-control" id="formContent" v-model="model.currentSnippetInEditor.content" style="height:600px;">{{model.currentSnippetInEditor.content}}</textarea>
                             </div>
                         </template>
+
                         <!-- display mode -->
                         <!-- https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md -->
                         <!-- plaintext, csharp, javascript/js, json, java, sql, python, css -->
                         <template v-else>
                             <template v-if="model.currentSnippet.lang == config.lang.markdown">
+                                <!-- markdown is not handled through highlightjs-->
                                 <div class="markdown" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
                             </template>
                             <template v-else>
-                                <pre><code :class="getSnippetLang(model.currentSnippet)">{{model.currentSnippet.content}}</code></pre>
+                                <pre><code :class="[getSnippetLang(model.currentSnippet), {'zebraStripes': state.showZebraStripes ? true : false }]">{{model.currentSnippet.content}}</code></pre>
                             </template>
                         </template>
                     </div>

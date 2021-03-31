@@ -103,12 +103,6 @@
       "src": "entypo"
     },
     {
-      "uid": "1e77a2yvsq3owssduo2lcgsiven57iv5",
-      "css": "pencil",
-      "code": 59401,
-      "src": "typicons"
-    },
-    {
       "uid": "e99461abfef3923546da8d745372c995",
       "css": "cog",
       "code": 59402,
@@ -119,6 +113,18 @@
       "css": "dot-3",
       "code": 59403,
       "src": "entypo"
+    },
+    {
+      "uid": "559647a6f430b3aeadbecd67194451dd",
+      "css": "menu",
+      "code": 61641,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "1a27e6346cdf0480c9c22351378bebbb",
+      "css": "clipboard",
+      "code": 59401,
+      "src": "typicons"
     }
   ]
 }

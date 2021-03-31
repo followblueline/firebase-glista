@@ -2,9 +2,10 @@
 /* css custom property */
 :root{
   --content-font-size: 13px;
+  --viewer-code-line-height: 1.4;
+  --viewer-code-striped-height: 72; /* (Math.floor(font size * 1.4) * 4) */
   --icon-color-hover: coral;
   --icon-color: #017075;
-  --viewer-code-line-height: 1rem;
 }
 
 @media screen and (min-width: 991px) {
@@ -35,14 +36,20 @@ html, body {
 #snippets .header .cmds {position: absolute; right: 0px; top: 10px;}
 
 #snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px; background-color: #fff;}
-#snippet .header .cmds, #snippet .metadata .cmds {float: right;}
+#snippet .header .cmds, #snippet .metadata .cmds {float: right; display:flex;}/* flex removes whitespace between inlineblock elements */
 #snippet .header .cmds {margin-top: -5px;}
 #snippet .header.editing {position:fixed; width:100%; z-index:99; top: 0;}
 #snippet .header.editing .cmds {/*margin-top: -5px;*/ position:fixed; top: 10px; right: 15px; z-index:100;}
 #snippet .header .title {max-width: 390px; display: inline-block; line-height: 1.2rem;  margin-top: -2px;}
-#snippet .header.editing {background-color: #ffd000;}
+#snippet .header.editing {background-color: #ffd000; background: linear-gradient(to left, #ffb300, #ffd000);}
+
+#snippet .description { word-wrap: break-word; white-space: pre-wrap; padding: 5px; border-bottom: 1px solid lightgray; background-color: #f5f5f5; font-size: 0.9rem;}
+#snippet .metadata {padding: 5px; height: 35px; background-color: #f1f1f1; border-bottom: 1px solid lightgray;}
+#snippet .metadata.editing {margin-top:50px;}
+#snippet .metadata .cmds {margin-right:12 px; margin-top: -2px;}
 
 #snippet .content {padding: 5px; border-bottom:1px solid lightgray; font-size: var(--content-font-size); box-shadow: 0px 4px 14px -3px lightgray;}
+
 /* markdown styling */
 #snippet .content .markdown {padding:0.5em;}
 #snippet .content .markdown h1 {font-size: 2rem}
@@ -53,10 +60,6 @@ html, body {
 #snippet .content .markdown table th, #snippet .content .markdown table td {padding: 5px;}
 #snippet .content .markdown table tbody tr:nth-child(odd) { background-color: #fff;}
 #snippet .content .markdown table tbody tr:nth-child(even) { background-color: #f4f4f4;}
-#snippet .description {padding: 5px; border-bottom: 1px solid lightgray; background-color: #f5f5f5; font-size: 0.9rem;}
-#snippet .metadata {padding: 5px; height: 44px; background-color: #f1f1f1; border-bottom: 1px solid lightgray;}
-#snippet .metadata.editing {margin-top:50px;}
-#snippet .metadata .cmds {margin-right: 12 px;}
 #snippet .content .markdown blockquote { background-color: #f4f4f4; padding: 5px; border-left: 10px solid #e4e4e4; }
 #snippet .content .markdown blockquote p{margin:0.5rem 0 0.5rem 0;}
 #snippet .content .markdown pre code { background-color: #f4f4f4; padding: 5px; }
@@ -69,11 +72,9 @@ html, body {
 
 .clear {clear: both;}
 
-.list-group-item:hover {background-color: #ffd000; cursor: pointer;}
-.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
-    color: inherit;
-    text-decoration: inherit;
-}
+.list-group-item {-webkit-transition: all 0.4s ease-in-out; transition: all 0.4s ease-in-out;}
+.list-group-item:hover {background-color: #ffd000; cursor: pointer;  -webkit-transition: all 0.2s ease-in-out; transition: all 0.2s ease-in-out;}
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {color: inherit; text-decoration: inherit;}
 
 
 .btn-xs{ padding: 1px 5px !important; font-size: 12px !important; line-height: 1.5 !important; border-radius: 3px !important; }
@@ -81,16 +82,33 @@ html, body {
 .icon {font-size:18px; cursor:pointer; color: var(--icon-color);}
 .icon:hover {color: var(--icon-color-hover) }
 .header .icon {font-size:22px;}
+.cmds .icon {margin: 0 2px;}
+.cmds .icon.selected {border: 1px solid #0170758a; border-radius: 3px; margin:0 1px;}
 /* .header .icon.shadowH:hover {
   border: 1px solid #fff;
   border-radius: 100%;
   box-shadow: 0px 6px 7px -3px #a0b6b7;
 } */
 
+
+
 /* highlighter viewer overrides */
 .hljs { background: #fff;}
 #snippet .content pre, #snippet .content code {font-size:inherit;}
-code.hljs.javascript, code.csharp, code.sql, code.css, code.json, code.python {line-height: var(--viewer-code-line-height); background-color:}
+#snippet pre code { padding: 0 0.5em;}
+#snippet pre code.hljs.plaintext {word-wrap: break-word; white-space: pre-wrap;}
+#snippet pre code.hljs.javascript, 
+#snippet pre code.csharp, 
+#snippet pre code.sql, 
+#snippet pre code.css, 
+#snippet pre code.json, 
+#snippet pre code.python {
+  line-height: var(--viewer-code-line-height); 
+}
+#snippet pre code.zebraStripes {
+  background-image: linear-gradient(0deg, #ffffff 25%, #f7f7f7 25%, #f7f7f7 50%, #ffffff 50%, #ffffff 75%, #f7f7f7 75%, #f7f7f7 100%); 
+  background-size: 80px var(--viewer-code-striped-height);
+}
 
 /* codemirror code editor override */
 .CodeMirror { border: 1px solid #eee; height: auto; } /* automatically resize to fit its content.*/
@@ -101,19 +119,3 @@ code.hljs.javascript, code.csharp, code.sql, code.css, code.json, code.python {l
 .CodeMirror-lines {line-height: var(--viewer-code-line-height)}
 
 
-.sweepright {
-  padding: .75em;
-  border: 1px #ddd solid;
-  background: linear-gradient(to left,#ff8177, #ffd000 );
-  background-repeat: no-repeat;
-  background-size: 0 100%;
-  transition: background-size 0.1s 0s;
-  transition-timing-function: ease-out;
-}
-
-.sweepright:hover {
-  background-size: 100% 100%;
-}
-
-/* Vue specifics */
-[v-cloak]{ display:none; }

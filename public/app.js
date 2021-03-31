@@ -43,7 +43,8 @@ var vm = new Vue({
       },
       state:{
           showModalNote: false,
-          showModalConfirm: false
+          showModalConfirm: false,
+          showZebraStripes: false
       }
     },
     computed:{
@@ -420,7 +421,7 @@ var vm = new Vue({
                 // using css custom property
                 // setting it through style will apply it after rendering making content jerky
                 document.documentElement.style.setProperty("--content-font-size", newSize + 'px');
-                //viewer.style.fontSize = (newSize) + 'px';
+                document.documentElement.style.setProperty("--viewer-code-striped-height", Math.floor(Math.floor(newSize * 1.4) * 4) + 'px');// 1.4 == line height
                 localStorage.setItem('viewerFontSize', newSize); // remember
             }
         },
@@ -500,6 +501,9 @@ var vm = new Vue({
                 this.model.searchResults = res;
             else
                 this.feedbackError(null, 'No results for ' + text);
+        },
+        toggleZebraStripes: function(){
+            this.state.showZebraStripes = !this.state.showZebraStripes;
         }
     },
   }).$mount("#app");
