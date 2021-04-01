@@ -218,7 +218,8 @@ var vm = new Vue({
                 description: '',
                 lang: '',
                 tags: [],
-                color: ''
+                color: '',
+                favorite: false
             };
             return snippet;
         },
@@ -347,6 +348,7 @@ var vm = new Vue({
                     parent: snippet.parent,
                     description: snippet.description || '',
                     lang: snippet.lang || '',
+                    favorite: snippet.favorite || false,
                     content: snippet.content || ''
                 })
                 .then(function() {
@@ -356,6 +358,20 @@ var vm = new Vue({
                     self.feedbackError(error, "Error updating document.");
                 });
             }
+        },
+        toggleSnippetFavorite: function(snippet){
+            snippet.favorite = !snippet.favorite;
+            var docRef = dbNotesRef.doc(snippet.id);
+            // update = update, set = insert. set will overwrite whole object if exists
+            docRef.update({
+                favorite: snippet.favorite,
+            })
+            .then(function() {
+                self.onSnippetSave(snippet, "Document successfully updated.")
+            })
+            .catch((error) => {
+                self.feedbackError(error, "Error updating document.");
+            });
         },
         // feedback and refresh items on screen
         onSnippetSave: function(snippet, msg){
@@ -433,7 +449,11 @@ var vm = new Vue({
             });
         },
         sortNotes: function(notes){
-            return notes.sort((a, b) => a.title.localeCompare(b.title));
+            return notes.sort(function(a, b)  {
+                if (a.favorite && !b.favorite) return -1;
+                if (!a.favorite && b.favorite) return 1;
+                return a.title.localeCompare(b.title);
+            });
         },
         onSignOut: function(){
             auth.signOut();
@@ -502,6 +522,12 @@ var vm = new Vue({
         },
         getSnippetLang: function(snippet){
             return snippet && snippet.lang ? snippet.lang : 'autodetect';
+        },
+        // some overrides for languages which are text
+        showZebraStripes: function(snippet){
+            if (!snippet.lang || ['autodetect', 'text', 'plaintext'].includes(snippet.lang.toLowerCase()))
+                return false;
+            return this.state.showZebraStripes ? true : false;
         },
         getSnippetEditorLang: function(snippet){
             // mapper to codemirror langs

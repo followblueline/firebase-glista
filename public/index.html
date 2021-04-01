@@ -118,9 +118,11 @@
                     </div>
                 </div-->
 
-                <ul class="list-group list-group-flush">
+                <ul class="list-group list-group-flush snippetList">
                     <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
-                        v-for="snippet in filteredSnippets" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
+                        v-for="snippet in filteredSnippets" @click="selectSnippet(snippet)">{{ snippet.title }}
+                        <span v-if="snippet.favorite" class="icon-favorite"><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
+                    </li>
                     <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
                         v-for="snippet in model.searchResults" @click="selectSnippet(snippet)">{{ snippet.title }}</li>
                 </ul>
@@ -147,7 +149,7 @@
                                 <span class="title">{{model.currentSnippet.title}}</span>
                                 <div class="cmds">
                                     <span class="icon" @click="editSnippet(model.currentSnippet)"><i class="icon-edit" alt="Edit" title="Edit"></i></span>
-                                    <span class="icon" ><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
+                                    <span :class="['icon', {'selected': model.currentSnippet.favorite}]" @click="toggleSnippetFavorite(model.currentSnippet)"><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
                                     <span class="icon" @click="deleteSnippet(model.currentSnippet)"><i class="icon-trash-empty" alt="Delete" title="Delete"></i></span>
                                 </div>
                             </template>
@@ -221,7 +223,7 @@
                                 <div class="markdown" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
                             </template>
                             <template v-else>
-                                <pre><code :class="[getSnippetLang(model.currentSnippet), {'zebraStripes': state.showZebraStripes ? true : false }]">{{model.currentSnippet.content}}</code></pre>
+                                <pre><code :class="[getSnippetLang(model.currentSnippet), {'zebraStripes': showZebraStripes(model.currentSnippet) }]">{{model.currentSnippet.content}}</code></pre>
                             </template>
                         </template>
                     </div>

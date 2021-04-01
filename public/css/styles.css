@@ -63,9 +63,10 @@ html, body {
 
 .clear {clear: both;}
 
-.list-group-item {-webkit-transition: all 0.4s ease-in-out; transition: all 0.4s ease-in-out;}
-.list-group-item:hover {background-color: #ffd000; -webkit-transition: all 0.2s ease-in-out; transition: all 0.2s ease-in-out;}
-.link-unstyled, .link-unstyled:link, .link-unstyled:hover {color: inherit; text-decoration: inherit;}
+.snippetList .list-group-item {-webkit-transition: all 0.4s ease-in-out; transition: all 0.4s ease-in-out;}
+.snippetList .list-group-item:hover {background-color: #ffd000; -webkit-transition: all 0.2s ease-in-out; transition: all 0.2s ease-in-out;}
+.snippetList .link-unstyled, .link-unstyled:link, .link-unstyled:hover {color: inherit; text-decoration: inherit;}
+.snippetList .icon-favorite {color: lightgrey; font-size: 12px; position: absolute; top: 0; right: 0;}
 
 
 .btn-xs{ padding: 1px 5px !important; font-size: 12px !important; line-height: 1.5 !important; border-radius: 3px !important; }
@@ -76,7 +77,8 @@ html, body {
 #app.darkblue #notebooks .icon {color: lightskyblue;}
 .header .icon {font-size:22px;}
 .cmds .icon {margin: 0 2px;}
-.cmds .icon.selected {border: 1px solid #0170758a; border-radius: 3px; margin:0 1px;}
+#snippet .header .cmds .icon.selected {color: var(--icon-color-hover) }
+#snippet .metadata .cmds .icon.selected {border: 1px solid #0170758a; border-radius: 3px; margin:0 1px;}
 /* .header .icon.shadowH:hover {
   border: 1px solid #fff;
   border-radius: 100%;
