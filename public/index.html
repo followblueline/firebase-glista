@@ -106,7 +106,7 @@
             <!-- snippets -->
             <div class="col-md-2" id="snippets" v-if="model.user">
                 <!-- :style="{'background': 'linear-gradient(to right,'+ model.currentNote?.color + ', #ffd000)'}" -->
-                <div class="header" :style="[{'border-left': '5px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'20'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'20, #fff 30%)'}]" >
+                <div class="header" :style="[{'border-bottom': '3px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'40, #fff 30%)'}]" >
                     {{model.currentNote?.title}}
                     <div class="cmds" v-if="model.currentNote">
                         <span class="icon" @click="editNotebook(model.currentNote)"><i class="icon-dot-3" alt="Configure" title="Configure" style="transform: rotate(90deg); display:inline-block"></i></span>
@@ -135,7 +135,7 @@
             <div class="col-lg-8" id="snippet" v-if="model.user">
                 <!-- prevent submit, vue will do the job -->
                 <form v-on:submit.prevent>
-                    <div :class="['header', {'editing': editingSnippet, 'active': model.currentSnippet}]">
+                    <div :class="['header', {'editing': editingSnippet}, {'active': model.currentSnippet}]" :style="getSnippetHeaderStyle(editingSnippet, model.currentSnippet, model.currentNote)">
                         <template v-if="model.currentSnippet">
                             <template v-if="editingSnippet">
                                 <span class="title">{{model.currentSnippet.id == 0 ? 'New snippet' : 'Edit snippet'}}</span>

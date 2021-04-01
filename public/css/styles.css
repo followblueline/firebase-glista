@@ -44,10 +44,10 @@ html, body {
 #snippets .header .cmds {position: absolute; right: 0px; top: 10px;}
 
 #snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px; background-color: #fff; z-index: 9; position: relative; }
-#snippet .header.active {box-shadow: 0px 2px 8px 1px rgb(255 152 0 / 31%); background: linear-gradient(9deg, #ffd00026, #fff 30%); border-left: 1px solid #ffd000;}
+#snippet .header.active {box-shadow: 0px 2px 8px 1px rgb(255 152 0 / 31%); background: linear-gradient(9deg, #ffd00026, #fff 30%); border-left: 0px solid #ffd000;}
 @media screen and (max-width: 991px) {
   /* separate content from menu to be more visible on mobile */
-  #snippet .header.active {border-top: 5px solid coral;}
+  #snippet .header.active {border-top: 5px solid #666;}
   #snippet .header.active.editing {border-top: 0;}
 }
 #snippet .header.editing {position:fixed; width:100%; z-index:99; top: 0; 

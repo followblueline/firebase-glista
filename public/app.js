@@ -31,6 +31,7 @@ var vm = new Vue({
                 {name: 'Maroon', code: '#800000'},
                 {name: 'Brown', code: '#9a6324'},
                 {name: 'Red', code: '#e6194b'},
+                {name: 'Fire brick', code: '#b22222'},
                 {name: 'Orange', code: '#f58231'},
                 {name: 'Yellow', code: '#ffe119'},
                 {name: 'Lime', code: '#bfef45'},
@@ -610,6 +611,13 @@ var vm = new Vue({
             if (!snippet || snippet.color == 'transparent')
                 return '#cccccc';// 6 chars so we can add transparency
             return snippet.color;
+        },
+        getSnippetHeaderStyle: function(editingSnippet, currentSnippet, currentNote){
+            // inline :style="getSnippetHeaderStyle(editingSnippet, model.currentSnippet, model.currentNote)[{'border-bottom': '3px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'20, #fff 30%)'}]">
+            // style will override editing yellow mode so we are conditioning it here
+            if (editingSnippet)
+                return [{'border-bottom': '3px solid '+ this.getSnippetColor(currentNote)}];
+            return [{'border-bottom': '3px solid '+ this.getSnippetColor(currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ this.getSnippetColor(currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ this.getSnippetColor(currentNote) +'20, #fff 30%)'}];
         }
     },
   }).$mount("#app");
