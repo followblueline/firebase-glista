@@ -79,15 +79,15 @@
                     <button v-if="!model.user" @click="onEmailPassSignIn" class="btn btn-secondary btn-xs">Email/pass Sign In</button>
                 </div>
                 <div class="clear"></div>
-                <hr>
+                <!--<hr>-->
 
                 <div class="search" v-if="model.user">
                     <input type="text" v-model="model.searchText" @blur="runSearch" @keyup.enter="runSearch" id="search" maxlength="100" autocomplete="off" class="form-control form-control-sm" placeholder="Search">
                 </div>
-                <hr>
+                <!--<hr>-->
 
-                <div v-if="model.currentNote" style="text-align: center; margin-bottom:20px;">
-                    <button class="btn btn-primary" @click="createSnippet" style="width:90%; padding:3px;">New snippet</button>
+                <div style="text-align: center; margin-bottom:20px; height:32px;">
+                    <button v-show="model.currentNote"  class="btn btn-primary" @click="createSnippet" style="width:90%; padding:3px;">New snippet</button>
                 </div>
                 
                 <!-- notebook list -->
@@ -95,9 +95,9 @@
                     <span class="title">Folders</span>
                     <span style="float:right" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Create folder"></i></span>
                     
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group notebookList list-group-flush">
                         <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
-                        v-for="note in filteredNotes" @click="selectNotebook(note)">{{ note.title }} <span class="count">{{getChildCount(note)}}</span></li>
+                        v-for="note in filteredNotes" @click="selectNotebook(note)"><i class="icon icon-circle" :style="{'color':getNotebookColor(note)}"></i> {{ note.title }} <span class="count">{{getChildCount(note)}}</span></li>
                     </ul>
                     <hr>
                 </div>
@@ -234,7 +234,7 @@
         </div>
 
         <!-- notebook edit -->
-        <modal_note vcloak v-show="state.showModalNote" v-if="model.user && model.currentNoteInEditor">
+        <modal_note id="notebook_edit" vcloak v-show="state.showModalNote" v-if="model.user && model.currentNoteInEditor">
             <template slot="header">
                 <h1>{{model.currentNoteInEditor.id ? 'Edit note' : 'New note'}}</h1>
             </template>
@@ -242,6 +242,18 @@
                 <div class="mb-3" style="width:600px">
                     <label for="noteTitle" class="form-label">Note title</label>
                     <input ref="noteTitle" v-model="model.currentNoteInEditor.title" v-on:keyup.enter="saveNotebook()" type="text" class="form-control" id="noteTitle" :maxlength="config.noteTitleMaxLength" required autocomplete="off">
+                </div>
+                <div class="mb-3" class="colorPicker">
+                    <label class="form-label">Note color</label>
+                    <div style="width:660px;">
+                        <div 
+                        v-for="color in config.colors" 
+                        @click="model.currentNoteInEditor.color = color.code" 
+                        :class="['color', {'selected': (model.currentNoteInEditor.color || '-').toLowerCase() == color.code}]"
+                        :style="{'background-color': color.code}" 
+                        :title="color.name"></div>
+                    </div>
+                    <div class="clear"></div>
                 </div>
             </template>
             <template slot="footer">

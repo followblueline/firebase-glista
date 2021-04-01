@@ -27,10 +27,14 @@ html, body {
 #snippet {min-height:100%; }
 
 #notebooks .header {height: 100px; position:relative;}
-#notebooks .header img { position: absolute; top: 10px; left: 14px; cursor: crosshair;}
-#notebooks .header h1 { margin-left: 74px; float: left; padding-top: 28px; color: mediumvioletred; cursor: crosshair;}
+#notebooks .header img { position: absolute; top: 10px; left: 10px; cursor: crosshair;}
+#notebooks .header h1 { margin-left: 62px; float: left; padding-top: 28px; color: mediumvioletred; cursor: crosshair;}
 #notebooks .header h1::first-letter {color: coral;}
+#notebooks .search {margin: 15px 0 25px 0;}
+#notebooks .notebookList { font-size:0.92rem; padding-left: 8px;}
 #notebooks .notebook {padding: 0.2rem 0.5rem; background-color: inherit; border: 0; cursor: pointer;}
+#notebooks_ .notebook::before { content: "\2022"; color: red; display: inline-block; width: 34px; margin-left: -15px; font-size: 33px; margin-right: -16px; line-height: 17px; vertical-align: top;}
+#notebooks .notebook .icon {font-size:10px; position:absolute; top:6px; left:-10px;}
 #notebooks .notebook.selected {font-weight: bold;}
 #notebooks .notebook:hover {color: coral;}
 #notebooks .notebook .count {float:right; font-size:0.8rem;}
@@ -123,6 +127,8 @@ html, body {
 .CodeMirror-lines {line-height: var(--viewer-code-line-height)}
 
 
+#notebook_edit .color {width:20px; height:20px; margin-right:10px; margin-bottom:10px; float: left; border: 1px solid #bac8d6; cursor:pointer;}
+#notebook_edit .color.selected {border:3px solid #000;}
 
 .sweepright {
   padding: .75em;

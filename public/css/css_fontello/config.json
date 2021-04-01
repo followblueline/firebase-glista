@@ -125,6 +125,12 @@
       "css": "clipboard",
       "code": 59401,
       "src": "typicons"
+    },
+    {
+      "uid": "130380e481a7defc690dfb24123a1f0c",
+      "css": "circle",
+      "code": 61713,
+      "src": "fontawesome"
     }
   ]
 }

@@ -26,6 +26,37 @@ var vm = new Vue({
         config: {
             noteTitleMaxLength: 30,
             snippetTitleMaxLength: 100,
+            colors:[
+                // https://www.w3schools.com/colors/colors_names.asp
+                {name: 'Maroon', code: '#800000'},
+                {name: 'Brown', code: '#9a6324'},
+                {name: 'Red', code: '#e6194b'},
+                {name: 'Orange', code: '#f58231'},
+                {name: 'Yellow', code: '#ffe119'},
+                {name: 'Lime', code: '#bfef45'},
+                {name: 'Green', code: '#3cb44b'},
+                {name: 'Dark green', code: '#006400'},
+                {name: 'Olive', code: '#808000'},
+                {name: 'Teal', code: '#469990'},
+                {name: 'Aqua', code: '#00ffff'},
+                {name: 'Cyan', code: '#42d4f4'},
+                {name: 'Blue', code: '#4363d8'},
+                {name: 'Navy', code: '#000075'},
+                {name: 'Purple', code: '#911eb4'},
+                {name: 'Magenta', code: '#f032e6'},
+                {name: 'Hot pink', code: '#ff69b4'},
+                {name: 'Pink', code: '#fabed4'},
+                {name: 'Apricot', code: '#ffd8b1'},
+                {name: 'Beige', code: '#fffac8'},
+                {name: 'Mint', code: '#aaffc3'},
+                {name: 'Lavender', code: '#dcbeff'},
+                {name: 'White', code: '#ffffff'},
+                {name: 'Grey', code: '#a9a9a9'},
+                {name: 'Light steel blue', code: '#b0c4de'},
+                {name: 'Slate grey', code: '#708090'},
+                {name: 'Black', code: '#000000'},
+                {name: 'Transparent', code: 'transparent'}
+            ]
         },
         enums: {
             lang: {
@@ -75,6 +106,8 @@ var vm = new Vue({
     },
     methods:{
         selectNotebook: function(note){
+            if (typeof(note.color) === 'undefined')
+                note.color = 'transparent';
             this.model.searchResults = null; // reset
             this.model.currentNote = note;
         },
@@ -87,7 +120,7 @@ var vm = new Vue({
                 this.model.currentNoteInEditor = null;
                 this.state.showModalNote = false;
             } else {
-                this.model.currentNoteInEditor = snippet;
+                this.model.currentNoteInEditor = this.cloneDeep(snippet);
                 this.state.showModalNote = true;
                 this.$nextTick(() => this.$refs.noteTitle.focus());
                 //this.model.notes.push(snippet);
@@ -145,7 +178,8 @@ var vm = new Vue({
                 // update = update, set = insert. set will overwrite whole object if exists
                 docRef.update({
                     title: snippet.title,
-                    parent: snippet.parent
+                    parent: snippet.parent,
+                    color: snippet.color
                 })
                 .then(function() {
                     self.onNoteSave(snippet, "Note successfully updated.")
@@ -153,6 +187,9 @@ var vm = new Vue({
                 .catch((error) => {
                     self.feedbackError(error, "Error updating note.");
                 });
+                // refresh values in UI
+                var note = this.model.notes.find(x => x.id == snippet.id);
+                _.merge(note, snippet);
             }
         },
         // feedback and refresh items on screen
@@ -170,7 +207,7 @@ var vm = new Vue({
             }
             self.sortNotes(self.model.notes); // reorder
             self.editNotebook(null);
-            self.feedbackOk('Note save.');
+            self.feedbackOk('Note saved.');
         },
         createEmptySnippet: function(){
             let snippet = {
@@ -180,7 +217,8 @@ var vm = new Vue({
                 title: '',
                 description: '',
                 lang: '',
-                tags: []
+                tags: [],
+                color: ''
             };
             return snippet;
         },
@@ -532,6 +570,12 @@ var vm = new Vue({
             this.state.skin = this.state.skin == this.enums.skin.darkblue ? this.enums.skin.light : this.enums.skin.darkblue;
 
             localStorage.setItem(this.enums.storage.skin, this.state.skin);
+        },
+        getNotebookColor: function(note){
+            // lavender '#e6e6fa' darkblue #142b40 lightgray #efefef
+            if (note.color)
+                return note.color;
+            return this.state.skin == this.enums.skin.light ? '#efefef': '#142B40';
         }
     },
   }).$mount("#app");
