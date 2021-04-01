@@ -22,7 +22,7 @@ html, body {
 
 #app {height: 100%;}
 #notebooks { /*max-width: 250px;*/ background-color: #efefef; padding: 5px; min-height: 100%; border-right: 1px solid lightgray;}
-#app.darkblue #notebooks {background-color: #142b40; color: lavender;}
+#app.darkblue #notebooks {background-color: #142b40; color: lavender; border-right: 1px solid #142b40;}
 #snippets{ min-height:100%; border-right: 1px solid lightgray;}
 #snippet {min-height:100%; }
 
