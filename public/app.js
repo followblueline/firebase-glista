@@ -597,11 +597,19 @@ var vm = new Vue({
 
             localStorage.setItem(this.enums.storage.skin, this.state.skin);
         },
+        // snippet color for dot before name
         getNotebookColor: function(note){
             // lavender '#e6e6fa' darkblue #142b40 lightgray #efefef
             if (note.color)
                 return note.color;
-            return this.state.skin == this.enums.skin.light ? '#efefef': '#142B40';
+            return 'transparent';
+            //return this.state.skin == this.enums.skin.light ? '#efefef': '#142B40';
+        },
+        // for gradients, transparent will default to gray
+        getSnippetColor: function(snippet) {
+            if (!snippet || snippet.color == 'transparent')
+                return '#cccccc';// 6 chars so we can add transparency
+            return snippet.color;
         }
     },
   }).$mount("#app");

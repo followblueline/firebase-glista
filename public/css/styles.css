@@ -43,15 +43,21 @@ html, body {
 #snippets .snippet.selected {background-color: #f1f1f1; padding-left: 15px; border-left: 5px solid #ffd000;}
 #snippets .header .cmds {position: absolute; right: 0px; top: 10px;}
 
-#snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px; background-color: #fff;}
-#snippet .header .cmds, #snippet .metadata .cmds {float: right; display:flex;}/* flex removes whitespace between inlineblock elements */
+#snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px; background-color: #fff; z-index: 9; position: relative; }
+#snippet .header.active {box-shadow: 0px 2px 8px 1px rgb(255 152 0 / 31%); background: linear-gradient(9deg, #ffd00026, #fff 30%); border-left: 1px solid #ffd000;}
+@media screen and (max-width: 991px) {
+  /* separate content from menu to be more visible on mobile */
+  #snippet .header.active {border-top: 5px solid coral;}
+  #snippet .header.active.editing {border-top: 0;}
+}
+#snippet .header.editing {position:fixed; width:100%; z-index:99; top: 0; 
+  background-color: #ffd000; background: linear-gradient(to left, #ffb300, #ffd000); box-shadow: 1px 6px 8px 0px rgb(255 152 0 / 22%) }
+
+  #snippet .header .cmds, #snippet .metadata .cmds {float: right; display:flex;}/* flex removes whitespace between inlineblock elements */
 #snippet .header .cmds {margin-top: -5px;}
 #snippet .header.editing .cmds {/*margin-top: -5px;*/ position:fixed; top: 10px; right: 15px; z-index:100;}
 #snippet .header.editing .cmds .btn {margin-left: 10px;}
 #snippet .header .title {max-width: 390px; display: inline-block; line-height: 1.2rem;  margin-top: -2px;}
-#snippet .header.editing {position:fixed; width:100%; z-index:99; top: 0; 
-  background-color: #ffd000; background: linear-gradient(to left, #ffb300, #ffd000); box-shadow: 1px 6px 8px 0px rgb(255 152 0 / 22%)}
-
 #snippet .description { word-wrap: break-word; white-space: pre-wrap; padding: 5px; border-bottom: 1px solid lightgray; background-color: #f5f5f5; font-size: 0.9rem;}
 #snippet .metadata {padding: 5px; height: 35px; background-color: #f1f1f1; border-bottom: 1px solid lightgray;}
 #snippet .metadata.editing {margin-top:50px;}
