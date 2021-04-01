@@ -33,7 +33,12 @@ var vm = new Vue({
             },
             storage: {
                 viewerFontSize: 'viewerFontSize',
-                showZebraStripes: 'showZebraStripes'
+                showZebraStripes: 'showZebraStripes',
+                skin: 'skin'
+            },
+            skin: {
+                light: 'light',
+                darkblue: 'darkblue'
             }
         },
         model: {
@@ -51,7 +56,8 @@ var vm = new Vue({
       state:{
           showModalNote: false,
           showModalConfirm: false,
-          showZebraStripes: false
+          showZebraStripes: false,
+          skin: 'light'
       }
     },
     computed:{
@@ -432,12 +438,6 @@ var vm = new Vue({
                 localStorage.setItem('viewerFontSize', newSize); // remember
             }
         },
-        loadStatesFromStorage: function(){
-            this.adjustViewerFontSize();
-
-            if (localStorage.getItem(this.enums.storage.showZebraStripes) != null)
-                this.state.showZebraStripes = localStorage.getItem(this.enums.storage.showZebraStripes).toLowerCase() == "true";
-        },
         copyToClipboard: function(){
             let text = '';
             if(this.editingSnippet){
@@ -518,6 +518,20 @@ var vm = new Vue({
         toggleZebraStripes: function(){
             this.state.showZebraStripes = !this.state.showZebraStripes;
             localStorage.setItem(this.enums.storage.showZebraStripes, this.state.showZebraStripes);
+        },
+        loadStatesFromStorage: function(){
+            this.adjustViewerFontSize();
+
+            if (localStorage.getItem(this.enums.storage.showZebraStripes) != null)
+                this.state.showZebraStripes = localStorage.getItem(this.enums.storage.showZebraStripes).toLowerCase() == "true";
+                
+            if (localStorage.getItem(this.enums.storage.skin) != null)
+                this.state.skin = localStorage.getItem(this.enums.storage.skin);
+        },
+        toggleSkin: function(){
+            this.state.skin = this.state.skin == this.enums.skin.darkblue ? this.enums.skin.light : this.enums.skin.darkblue;
+
+            localStorage.setItem(this.enums.storage.skin, this.state.skin);
         }
     },
   }).$mount("#app");

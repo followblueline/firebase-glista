@@ -58,13 +58,13 @@
 </head>
 <body>
 
-    <div id="app" class="container-fluid pl-0 pr-0">
+    <div id="app" :class="['container-fluid', 'pl-0', 'pr-0', state.skin]">
         <div class="row no-gutters" style="min-height:100%;">
             <!-- notebook column -->
             <div class="col-md-2" id="notebooks">
                 <div class="header">
-                    <img src="images/glista.png" width="64px" alt="Glista">
-                    <h1>Glista</h1>
+                    <img src="images/glista.png" width="64px" alt="Glista" @click="toggleSkin()">
+                    <h1 @click="toggleSkin()">Glista</h1>
                 </div>
                 <div class="clear"></div>
                 

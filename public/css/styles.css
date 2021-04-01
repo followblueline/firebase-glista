@@ -21,13 +21,14 @@ html, body {
 
 
 #app {height: 100%;}
-#notebooks { /*max-width: 250px;*/ background-color: #142b40; color: lavender; padding: 5px; min-height: 100%; border-right: 1px solid lightgray;}
+#notebooks { /*max-width: 250px;*/ background-color: #efefef; padding: 5px; min-height: 100%; border-right: 1px solid lightgray;}
+#app.darkblue #notebooks {background-color: #142b40; color: lavender;}
 #snippets{ min-height:100%; border-right: 1px solid lightgray;}
 #snippet {min-height:100%; }
 
 #notebooks .header {height: 100px; position:relative;}
-#notebooks .header img { position: absolute; top: 10px; left: 14px;}
-#notebooks .header h1 { margin-left: 74px; float: left; padding-top: 28px; color: mediumvioletred;}
+#notebooks .header img { position: absolute; top: 10px; left: 14px; cursor: crosshair;}
+#notebooks .header h1 { margin-left: 74px; float: left; padding-top: 28px; color: mediumvioletred; cursor: crosshair;}
 #notebooks .header h1::first-letter {color: coral;}
 #notebooks .notebook {padding: 0.2rem 0.5rem; background-color: inherit; border: 0; cursor: pointer;}
 #notebooks .notebook.selected {font-weight: bold;}
@@ -68,7 +69,7 @@ html, body {
 
 .icon {font-size:18px; cursor:pointer; color: var(--icon-color);}
 .icon:hover {color: var(--icon-color-hover) }
-#notebooks .icon {color: lightskyblue;}
+#app.darkblue #notebooks .icon {color: lightskyblue;}
 .header .icon {font-size:22px;}
 .cmds .icon {margin: 0 2px;}
 .cmds .icon.selected {border: 1px solid #0170758a; border-radius: 3px; margin:0 1px;}
