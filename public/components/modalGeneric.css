@@ -13,7 +13,7 @@
   .modal-wrapper { display: table-cell; vertical-align: middle; }
   
   .modal-container {
-    width: fit-content;
+    width: max-content;
     margin: 0px auto;
     padding: 20px 30px;
     background-color: #fff;
