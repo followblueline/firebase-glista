@@ -105,7 +105,8 @@
             
             <!-- snippets -->
             <div class="col-md-2" id="snippets" v-if="model.user">
-                <div class="header">
+                <!-- :style="{'background': 'linear-gradient(to right,'+ model.currentNote?.color + ', #ffd000)'}" -->
+                <div class="header" :style="{'border-left': '5px solid '+ model.currentNote?.color}" >
                     {{model.currentNote?.title}}
                     <div class="cmds" v-if="model.currentNote">
                         <span class="icon" @click="editNotebook(model.currentNote)"><i class="icon-dot-3" alt="Configure" title="Configure" style="transform: rotate(90deg); display:inline-block"></i></span>
