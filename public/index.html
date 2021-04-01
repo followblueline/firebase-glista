@@ -224,6 +224,10 @@
                             </template>
                         </template>
                     </div>
+
+                    <div v-if="model.notes.length == 0" style="display: flex; justify-content: center;">
+                        <span style="margin-top:100px;" class="text-muted text-center">You have no snippets.<br><br>Create folder, select it and create first snippet with <strong>New snippet</strong> button!</span>
+                    </div>
                 </form>
             </div>
 
