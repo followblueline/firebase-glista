@@ -242,13 +242,13 @@
                 <h1>{{model.currentNoteInEditor.id ? 'Edit note' : 'New note'}}</h1>
             </template>
             <template slot="body">
-                <div class="mb-3" style="width:600px">
+                <div class="mb-3">
                     <label for="noteTitle" class="form-label">Note title</label>
                     <input ref="noteTitle" v-model="model.currentNoteInEditor.title" v-on:keyup.enter="saveNotebook()" type="text" class="form-control" id="noteTitle" :maxlength="config.noteTitleMaxLength" required autocomplete="off">
                 </div>
-                <div class="mb-3" class="colorPicker">
+                <div class="mb-0" class="colorPicker">
                     <label class="form-label">Note color</label>
-                    <div style="width:660px;">
+                    <div>
                         <div 
                         v-for="color in config.colors" 
                         @click="model.currentNoteInEditor.color = color.code" 
