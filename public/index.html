@@ -97,7 +97,7 @@
                     
                     <ul class="list-group notebookList list-group-flush">
                         <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
-                        v-for="note in filteredNotes" @click="selectNotebook(note)"><i class="icon icon-circle" :style="{'color':getNotebookColor(note)}"></i> {{ note.title }} <span class="count">{{getChildCount(note)}}</span></li>
+                        v-for="note in filteredNotes" @click="selectNotebook(note)"><i class="icon icon-circle" :style="{'color':getNotebookColor(note)}"></i>{{note.order}} {{ note.title }} <span class="count">{{getChildCount(note)}}</span></li>
                     </ul>
                     <hr>
                 </div>
@@ -246,7 +246,7 @@
                     <label for="noteTitle" class="form-label">Note title</label>
                     <input ref="noteTitle" v-model="model.currentNoteInEditor.title" v-on:keyup.enter="saveNotebook()" type="text" class="form-control" id="noteTitle" :maxlength="config.noteTitleMaxLength" required autocomplete="off">
                 </div>
-                <div class="mb-0" class="colorPicker">
+                <div class="mb-3" class="colorPicker">
                     <label class="form-label">Note color</label>
                     <div>
                         <div 
@@ -257,6 +257,11 @@
                         :title="color.name"></div>
                     </div>
                     <div class="clear"></div>
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Folder position</label>
+                    <span class="icon" @click="reorderNotebook(model.currentNoteInEditor, -1)"><i class="icon-up-big" alt="Move up" title="Move up"></i></span>
+                    <span class="icon" @click="reorderNotebook(model.currentNoteInEditor, 1)"><i class="icon-down-big" alt="Move down" title="Move down"></i></span>
                 </div>
             </template>
             <template slot="footer">

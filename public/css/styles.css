@@ -43,7 +43,7 @@ html, body {
 
 #snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px; background-color: #fff; z-index: 9; position: relative; }
 #snippets .header {overflow: hidden;}
-#snippets .header .cmds {position: absolute; right: 0px; top: 10px;}
+#snippets .header .cmds {position: absolute; right: 0px; top: 7px;}
 #snippet .header.active {box-shadow: 0px 2px 8px 1px rgb(255 152 0 / 31%); background: linear-gradient(9deg, #ffd00026, #fff 30%); border-left: 0px solid #ffd000;}
 @media screen and (max-width: 991px) {
   /* separate content from menu to be more visible on mobile */

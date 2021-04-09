@@ -11,6 +11,10 @@
 .icon-clipboard:before { content: '\e809'; } /* '' */
 .icon-cog:before { content: '\e80a'; } /* '' */
 .icon-dot-3:before { content: '\e80b'; } /* '' */
+.icon-up-open:before { content: '\e80c'; } /* '' */
+.icon-down-open:before { content: '\e80d'; } /* '' */
+.icon-down-big:before { content: '\e80e'; } /* '' */
+.icon-up-big:before { content: '\e80f'; } /* '' */
 .icon-link-ext:before { content: '\f08e'; } /* '' */
 .icon-docs:before { content: '\f0c5'; } /* '' */
 .icon-menu:before { content: '\f0c9'; } /* '' */

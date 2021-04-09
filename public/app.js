@@ -83,7 +83,8 @@ var vm = new Vue({
             codeMirrorRef: null, // reference for code mirror, we need it to retrieve non-highlighted editor content before saving
             notesUsubscribe: null,
             searchText: null, // search text
-            searchResults: null
+            searchResults: null,
+            updateOrderForNotes: [] // reorder is updated after note save
       },
       state:{
           showModalNote: false,
@@ -97,7 +98,15 @@ var vm = new Vue({
             return this.model.currentSnippetInEditor != null;
         },
         filteredNotes: function(){
-            return this.model.notes.filter(x => !x.parent);
+            var rootNotes = this.model.notes.filter(x => !x.parent);
+            // rootNotes.sort(function(a, b)  {
+            //     if (!isNaN(a.order) && isNaN(b.order)) return -1;
+            //     if (isNaN(a.order) && !isNaN(b.order)) return 1;
+            //     if (!isNaN(a.order) && !isNaN(b.order)) return a.order - b.order;
+            //     return a.title.localeCompare(b.title);
+            // });
+            this.sortNotebooks(rootNotes);
+            return rootNotes;
         },
         filteredSnippets: function(){
             if (this.model.currentNote)
@@ -107,7 +116,7 @@ var vm = new Vue({
     },
     methods:{
         selectNotebook: function(note){
-            if (typeof(note.color) === 'undefined')
+            if (note && typeof(note.color) === 'undefined')
                 note.color = 'transparent';
             this.model.searchResults = null; // reset
             this.model.currentNote = note;
@@ -156,7 +165,7 @@ var vm = new Vue({
                 self.feedbackOk('Snippets deleted.');
             })
             .catch(function(error){
-                this.feedbackError(error, 'Error in batch delete.');
+                self.feedbackError(error, 'Error in batch delete.');
             });
         },
         saveNotebook: function(){
@@ -180,10 +189,24 @@ var vm = new Vue({
                 docRef.update({
                     title: snippet.title,
                     parent: snippet.parent,
-                    color: snippet.color
+                    color: snippet.color,
+                    order: snippet.order
                 })
                 .then(function() {
                     self.onNoteSave(snippet, "Note successfully updated.")
+
+                    while (self.model.updateOrderForNotes.length > 0){ 
+                        let note = self.model.updateOrderForNotes[0];
+                        var docRef = dbNotesRef.doc(note.id);
+                        docRef.update({
+                            order: note.order,
+                        })
+                        .then(function() {
+                            //console.log('saved', note.id);
+                        });
+                            
+                        self.model.updateOrderForNotes.splice(0,1);
+                    }
                 })
                 .catch((error) => {
                     self.feedbackError(error, "Error updating note.");
@@ -220,7 +243,8 @@ var vm = new Vue({
                 lang: '',
                 tags: [],
                 color: '',
-                favorite: false
+                favorite: false,
+                order: self.filteredNotes.length + 1
             };
             return snippet;
         },
@@ -440,6 +464,7 @@ var vm = new Vue({
                     // doc.data() is never undefined for query doc snapshots
                     var note = doc.data();
                     note.id = doc.id;
+                    note.order = isNaN(note.order) ? 0 : note.order; // default value
                     items.push(note);
                 });
                 // build tree
@@ -453,6 +478,14 @@ var vm = new Vue({
             return notes.sort(function(a, b)  {
                 if (a.favorite && !b.favorite) return -1;
                 if (!a.favorite && b.favorite) return 1;
+                return a.title.localeCompare(b.title);
+            });
+        },
+        sortNotebooks: function(notebooks){
+            notebooks.sort(function(a, b)  {
+                if (!isNaN(a.order) && isNaN(b.order)) return -1;
+                if (isNaN(a.order) && !isNaN(b.order)) return 1;
+                if (!isNaN(a.order) && !isNaN(b.order)) return a.order - b.order;
                 return a.title.localeCompare(b.title);
             });
         },
@@ -618,6 +651,32 @@ var vm = new Vue({
             if (editingSnippet)
                 return [{'border-bottom': '3px solid '+ this.getSnippetColor(currentNote)}];
             return [{'border-bottom': '3px solid '+ this.getSnippetColor(currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ this.getSnippetColor(currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ this.getSnippetColor(currentNote) +'20, #fff 30%)'}];
+        },
+        // move up/down
+        reorderNotebook(notebook, direction){
+            // swap places, then build order
+            let rootNotes = this.model.notes.filter(x => !x.parent);
+            this.sortNotebooks(rootNotes); // for consequtive reorders update current state
+            let ix = rootNotes.findIndex(x => x.id == notebook.id);
+            let targetIndex = direction > 0 ? ix + 1 : ix -1;
+            if (targetIndex >=0 && targetIndex <= (rootNotes.length - 1)){
+                let tmp = rootNotes[ix];
+                rootNotes[ix] = rootNotes[targetIndex];
+                rootNotes[targetIndex] = tmp;
+            }
+            
+            // update original
+            let notesToUpdate = [];
+            for(let i=0, j= rootNotes.length; i<j;i++){
+                notesToUpdate.push(rootNotes[i]);
+                let note = this.model.notes.find(x => x.id == rootNotes[i].id);
+                note.order = i + 1;
+                if (rootNotes[i].id == notebook.id)
+                    notebook.order = i + 1;
+            }
+
+            // persist rest on note save
+            this.model.updateOrderForNotes = notesToUpdate;
         }
     },
   }).$mount("#app");
