@@ -46,6 +46,8 @@
     <!-- markdown converter -->
     <script src="scripts/showdown.min.js"></script>
 
+    <script src="app/app_settings.js" defer></script>
+    <script src="app/glista.js" defer></script>
     <script src="app.js" defer></script>
     <!-- to modify icon selection go to fontello.com, wrench icon >  import config.json from \public\css\fontello folder -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -136,6 +138,7 @@
                 <!-- prevent submit, vue will do the job -->
                 <form v-on:submit.prevent>
                     <div :class="['header', {'editing': editingSnippet}, {'active': model.currentSnippet}]" :style="getSnippetHeaderStyle(editingSnippet, model.currentSnippet, model.currentNote)">
+                        
                         <template v-if="model.currentSnippet">
                             <template v-if="editingSnippet">
                                 <span class="title">{{model.currentSnippet.id == 0 ? 'New snippet' : 'Edit snippet'}}</span>
@@ -199,10 +202,15 @@
                     </div>
 
                     <div  v-if="model.currentSnippet" class="content">
+                        <div style="width: 100%;" class="error" v-if="model.errors">
+                            <ul>
+                                <li v-for="error in model.errors">{{error}}</li>
+                            </ul>
+                        </div>
                         <template v-if="editingSnippet">
                             <div class="mb-3">
                                 <label for="formTitle" class="form-label">Title</label>
-                                <input ref="formTitle" type="text" class="form-control" id="formTitle" v-model="model.currentSnippetInEditor.title" :maxlength="config.snippetTitleMaxLength" required  autocomplete="off">
+                                <input ref="formTitle" type="text" class="form-control" id="formTitle" v-model="model.currentSnippetInEditor.title" :maxlength="config.validation.snippetTitleMaxLength" required  autocomplete="off">
                             </div>
                             <div class="mb-3">
                                 <label for="formDescription" class="form-label">Description</label>
@@ -244,13 +252,13 @@
             <template slot="body">
                 <div class="mb-3">
                     <label for="noteTitle" class="form-label">Note title</label>
-                    <input ref="noteTitle" v-model="model.currentNoteInEditor.title" v-on:keyup.enter="saveNotebook()" type="text" class="form-control" id="noteTitle" :maxlength="config.noteTitleMaxLength" required autocomplete="off">
+                    <input ref="noteTitle" v-model="model.currentNoteInEditor.title" v-on:keyup.enter="saveNotebook()" type="text" class="form-control" id="noteTitle" :maxlength="config.validation.noteTitleMaxLength" required autocomplete="off">
                 </div>
                 <div class="mb-3" class="colorPicker">
                     <label class="form-label">Note color</label>
                     <div>
                         <div 
-                        v-for="color in config.colors" 
+                        v-for="color in config.noteColors" 
                         @click="model.currentNoteInEditor.color = color.code" 
                         :class="['color', {'selected': (model.currentNoteInEditor.color || '-').toLowerCase() == color.code}]"
                         :style="{'background-color': color.code}" 
@@ -269,6 +277,11 @@
                     <button class="btn btn-shadow btn-danger" style="position: absolute; left:0;" @click="deleteNotebookConfirm()" v-show="model?.currentNoteInEditor && model?.currentNoteInEditor?.id">Delete</button>
                     <button class="btn btn-shadow btn-primary" @click="saveNotebook()">Ok</button>
                     <button class="btn btn-shadow btn-secondary" @click="editNotebook(null)">Cancel</button>
+                </div>
+                <div style="width: 100%;" class="error" v-if="model.errors">
+                    <ul>
+                        <li v-for="error in model.errors">{{error}}</li>
+                    </ul>
                 </div>
             </template>
         </modal_note>

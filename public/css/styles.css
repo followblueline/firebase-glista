@@ -53,7 +53,7 @@ html, body {
 #snippet .header.editing {position:fixed; width:100%; z-index:99; top: 0; 
   background-color: #ffd000; background: linear-gradient(to left, #ffb300, #ffd000); box-shadow: 1px 6px 8px 0px rgb(255 152 0 / 22%) }
 
-  #snippet .header .cmds, #snippet .metadata .cmds {float: right; display:flex;}/* flex removes whitespace between inlineblock elements */
+#snippet .header .cmds, #snippet .metadata .cmds {float: right; display:flex;}/* flex removes whitespace between inlineblock elements */
 #snippet .header .cmds {margin-top: -5px;}
 #snippet .header.editing .cmds {/*margin-top: -5px;*/ position:fixed; top: 10px; right: 15px; z-index:100;}
 #snippet .header.editing .cmds .btn {margin-left: 10px;}
@@ -68,6 +68,7 @@ html, body {
 .user .name {display:inline-block; margin-left: 10px;}
 
 .clear {clear: both;}
+.error {color: red;}
 
 .snippetList .list-group-item {-webkit-transition: all 0.4s ease-in-out; transition: all 0.4s ease-in-out;}
 .snippetList .list-group-item:hover {background-color: #ffd000; -webkit-transition: all 0.2s ease-in-out; transition: all 0.2s ease-in-out;}

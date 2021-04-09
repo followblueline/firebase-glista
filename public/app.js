@@ -13,9 +13,6 @@ let htmlConverter = new showdown.Converter({literalMidWordUnderscores: true, tab
 
 let self;
 var vm = new Vue({
-    // components:{
-    //   'movie-list': cMovieList
-    // },
     created: function(){
       self = this; // preserve this scope for async functions
       console.log("vue created");
@@ -23,58 +20,11 @@ var vm = new Vue({
       self.loadStatesFromStorage();
     },
     data: {
-        config: {
-            noteTitleMaxLength: 30,
-            snippetTitleMaxLength: 100,
-            colors:[
-                // https://www.w3schools.com/colors/colors_names.asp
-                {name: 'Maroon', code: '#800000'},
-                {name: 'Brown', code: '#9a6324'},
-                {name: 'Red', code: '#e6194b'},
-                {name: 'Fire brick', code: '#b22222'},
-                {name: 'Orange', code: '#f58231'},
-                {name: 'Yellow', code: '#ffe119'},
-                {name: 'Lime', code: '#bfef45'},
-                {name: 'Green', code: '#3cb44b'},
-                {name: 'Dark green', code: '#006400'},
-                {name: 'Olive', code: '#808000'},
-                {name: 'Teal', code: '#469990'},
-                {name: 'Aqua', code: '#00ffff'},
-                {name: 'Cyan', code: '#42d4f4'},
-                {name: 'Blue', code: '#4363d8'},
-                {name: 'Navy', code: '#000075'},
-                {name: 'Purple', code: '#911eb4'},
-                {name: 'Magenta', code: '#f032e6'},
-                {name: 'Hot pink', code: '#ff69b4'},
-                {name: 'Pink', code: '#fabed4'},
-                {name: 'Apricot', code: '#ffd8b1'},
-                {name: 'Beige', code: '#fffac8'},
-                {name: 'Mint', code: '#aaffc3'},
-                {name: 'Lavender', code: '#dcbeff'},
-                {name: 'White', code: '#ffffff'},
-                {name: 'Grey', code: '#a9a9a9'},
-                {name: 'Light steel blue', code: '#b0c4de'},
-                {name: 'Slate grey', code: '#708090'},
-                {name: 'Black', code: '#000000'},
-                {name: 'Transparent', code: 'transparent'}
-            ]
-        },
-        enums: {
-            lang: {
-                markdown: 'markdown'
-            },
-            storage: {
-                viewerFontSize: 'viewerFontSize',
-                showZebraStripes: 'showZebraStripes',
-                skin: 'skin'
-            },
-            skin: {
-                light: 'light',
-                darkblue: 'darkblue'
-            }
-        },
+        config: appSettings.config,
+        enums: appSettings.enums,
         model: {
             user: null,
+            errors: [],
             notes: [], // all notes
             currentNote: null,
             currentNoteInEditor: null, // for edit mode
@@ -90,7 +40,7 @@ var vm = new Vue({
           showModalNote: false,
           showModalConfirm: false,
           showZebraStripes: false,
-          skin: 'light'
+          skin: appSettings.enums.skin.light
       }
     },
     computed:{
@@ -115,6 +65,9 @@ var vm = new Vue({
         }
     },
     methods:{
+        resetErrors: function(){
+            this.model.errors = [];
+        },
         selectNotebook: function(note){
             if (note && typeof(note.color) === 'undefined')
                 note.color = 'transparent';
@@ -136,6 +89,7 @@ var vm = new Vue({
                 //this.model.notes.push(snippet);
                 //this.sortNotes(this.model.notes);  
             }
+            this.resetErrors();
         },
         deleteNotebookConfirm: function(){
             this.state.showModalConfirm = true;
@@ -170,6 +124,10 @@ var vm = new Vue({
         },
         saveNotebook: function(){
             var snippet = this.model.currentNoteInEditor;
+            this.model.errors = glista.validateNote(snippet, appSettings.enums.noteType.note);
+            if (this.model.errors.length > 0)
+                return;
+
             if (!snippet.id){
                 // insert. set will overwrite whole object if exists
                 dbNotesRef.add(
@@ -309,6 +267,7 @@ var vm = new Vue({
 
                 }, 100);
             }
+            this.resetErrors();
         },
         cloneSnippet: function(snippet){
             if (confirm(`Clone ${snippet.title}?`)){
@@ -335,22 +294,14 @@ var vm = new Vue({
             this.model.codeMirrorRef.getScrollerElement().style.minHeight = '300px';
             this.model.codeMirrorRef.refresh();
         },
-        validateSnippet: function(snippet){
-            // TODO: validate
-            if (!snippet.parent){
-                // validate note
-                if (snippet.title.length == 0 || snippet.length > this.config.noteTitleMaxLength) return false;
-            } else {
-                // validate snippet
-                if (snippet.title.length == 0 || snippet.length > this.config.snippetTitleMaxLength) return false;
-            }
-            return true;
-        },
         saveSnippet: function(){
             var snippet = this.model.currentSnippetInEditor;
             if (!this.model.codeMirrorRef) console.error('codeMirrorRef not loaded!');
             snippet.content = this.model.codeMirrorRef.doc.getValue(); // get non-highlighted text
-            if (!this.validateSnippet(snippet)) return;
+            
+            this.model.errors = glista.validateNote(snippet, appSettings.enums.noteType.snippet);
+            if (this.model.errors.length > 0)
+                return;
 
             if (!snippet.id){
                 // insert. set will overwrite whole object if exists
