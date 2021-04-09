@@ -34,7 +34,8 @@ var vm = new Vue({
             notesUsubscribe: null,
             searchText: null, // search text
             searchResults: null,
-            updateOrderForNotes: [] // reorder is updated after note save
+            updateOrderForNotes: [], // reorder is updated after note save
+            editorCharCount: 0
       },
       state:{
           showModalNote: false,
@@ -238,8 +239,10 @@ var vm = new Vue({
         // open snippet in editor. content is cloned from current snippet so we can restore it on cancel without rereading it from db
         editSnippet: function(snippet){
             if (!snippet){
-                if (this.model.codeMirrorRef)
+                if (this.model.codeMirrorRef){
+                    this.model.codeMirrorRef.off('change');
                     this.model.codeMirrorRef.toTextArea(); // prevent submit handler memory leak
+                }
                 this.model.currentSnippetInEditor = null; // cancel btn
                 this.highlightCode(this.model.currentSnippet); // cancel btn
             } else {
@@ -276,8 +279,12 @@ var vm = new Vue({
                 lineNumbers: true,
                 tabSize: 4,
                 indentUnit: 4,
-                mode: this.getSnippetEditorLang(snippet)
+                mode: this.getSnippetEditorLang(snippet),
             });
+            this.model.codeMirrorRef.on('change', (editor) => {
+                this.model.editorCharCount = editor.doc.getValue().length;
+              });
+            this.model.editorCharCount = this.model.codeMirrorRef.doc.getValue().length;// init
             this.model.codeMirrorRef.getScrollerElement().style.minHeight = '300px';
             this.model.codeMirrorRef.refresh();
         },

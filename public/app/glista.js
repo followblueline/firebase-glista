@@ -32,7 +32,8 @@ let glista = (function(){
             if (item.title && item.title.length > appSettings.config.validation.snippetTitleMaxLength) errors.push('Title max length is ' + appSettings.config.validation.snippetTitleMaxLength);
         }
         if (item.description && item.description.length > appSettings.config.validation.descriptionMaxLength) errors.push('Description max length is ' + appSettings.config.validation.descriptionMaxLength);
-
+        if (item.content && item.content.length > appSettings.config.validation.contentMaxLength) errors.push('Content max length is ' + appSettings.config.validation.contentMaxLength);
+        
         return errors;
     }
     
@@ -55,3 +56,20 @@ let glista = (function(){
         validateSnippet: validateSnippet
     }
 })();
+
+// utils
+
+/**
+ * Number.prototype.format(n, x, s, c)
+ * 
+ * @param integer n: length of decimal
+ * @param integer x: length of whole part
+ * @param mixed   s: sections delimiter
+ * @param mixed   c: decimal delimiter
+ */
+Number.prototype.format = function(n, x, s, c) {
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+        num = this.toFixed(Math.max(0, ~~n));
+
+    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+};

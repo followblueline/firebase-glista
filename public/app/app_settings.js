@@ -5,7 +5,8 @@ var appSettings = (function(){
       validation: {
         noteTitleMaxLength: 30,
         snippetTitleMaxLength: 100,
-        descriptionMaxLength: 4000
+        descriptionMaxLength: 4000,
+        contentMaxLength: 100000
       },
       noteColors:[
           // https://www.w3schools.com/colors/colors_names.asp

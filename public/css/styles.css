@@ -86,6 +86,7 @@ html, body {
 .cmds .icon {margin: 0 2px;}
 #snippet .header .cmds .icon.selected {color: var(--icon-color-hover) }
 #snippet .metadata .cmds .icon.selected {border: 1px solid #0170758a; border-radius: 3px; margin:0 1px;}
+#snippet .metadata .cmds .charCount { margin-right: 20px; color: #017075; margin-top: 3px; font-size: 13px;}
 /* .header .icon.shadowH:hover {
   border: 1px solid #fff;
   border-radius: 100%;

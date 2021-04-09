@@ -186,8 +186,11 @@
                                 <option v-for="note in filteredNotes" :value="note.id" :selected="note.id == model.currentNote.id">{{ note.title }}</option>
                             </select>
                         </template>
-
+                        
+                        
                         <div class="cmds">
+                            <span v-if="editingSnippet" class="charCount">Chars: {{model.editorCharCount.format(0,3,'.')}}</span>
+                            <span v-if="model.currentSnippet && !editingSnippet" class="charCount">Chars: {{model.currentSnippet.content.length.format(0,3,'.')}}</span>
                             <!-- <i class="icon-link"></i> -->
                             <i v-if="model.currentSnippet" @click="copyToClipboard()" class="icon icon-clipboard" title="Copy to clipboard"></i>
                             <i v-if="model.currentSnippet" @click="cloneSnippet(model.currentSnippet)" class="icon icon-docs" title="Clone snippet"></i>
@@ -214,11 +217,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="formDescription" class="form-label">Description</label>
-                                <textarea class="form-control" id="formDescription" v-model="model.currentSnippetInEditor.description" style="height:60px;">{{model.currentSnippetInEditor.description}}</textarea>
+                                <textarea class="form-control" id="formDescription" v-model="model.currentSnippetInEditor.description" style="height:60px;" :maxlength="config.validation.descriptionMaxLength" >{{model.currentSnippetInEditor.description}}</textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="formContent" class="form-label">Content</label>
-                                <textarea class="form-control" id="formContent" v-model="model.currentSnippetInEditor.content" style="height:600px;">{{model.currentSnippetInEditor.content}}</textarea>
+                                <textarea class="form-control" id="formContent" v-model="model.currentSnippetInEditor.content" style="height:600px;" :maxlength="config.validation.contentMaxLength">{{model.currentSnippetInEditor.content}}</textarea>
                             </div>
                         </template>
 
