@@ -75,7 +75,8 @@ var vm = new Vue({
             this.model.currentNote = note;
         },
         createNotebook: function(){
-            let snippet = this.createEmptySnippet();
+            let snippet = glista.createEmptySnippet();
+            snippet.order = self.filteredNotes.length + 1;
             this.editNotebook(snippet);
         },
         editNotebook: function(snippet){
@@ -191,24 +192,10 @@ var vm = new Vue({
             self.editNotebook(null);
             self.feedbackOk('Note saved.');
         },
-        createEmptySnippet: function(){
-            let snippet = {
-                uid: self.model.user.uid,
-                id: null,
-                parent: '',
-                title: '',
-                description: '',
-                lang: '',
-                tags: [],
-                color: '',
-                favorite: false,
-                order: self.filteredNotes.length + 1
-            };
-            return snippet;
-        },
+
         createSnippet: function(){
             // check if already editing new snippet
-            let snippet = this.createEmptySnippet();
+            let snippet = glista.createEmptySnippet();
             snippet.parent = self.model.currentNote.id;
             self.selectSnippet(snippet); // select new snippet
             self.editSnippet(snippet);// immediately open in editor

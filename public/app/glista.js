@@ -1,5 +1,21 @@
 let glista = (function(){
 
+    let createEmptySnippet = function(){
+        let snippet = {
+            uid: self.model.user.uid,
+            id: null,
+            parent: '',
+            title: '',
+            description: '',
+            lang: '',
+            tags: [],
+            color: '',
+            favorite: false,
+            order: 0
+        };
+        return snippet;
+    }
+
      // log proxy
     let logme = function(a){
         console.log.apply(this, arguments);
@@ -31,6 +47,7 @@ let glista = (function(){
     }
 
     return {
+        createEmptySnippet: createEmptySnippet,
         logme: logme,
         // return: errors[]
         validateNote: validateNote,
