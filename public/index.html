@@ -21,6 +21,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
 
     <!-- <script src="scripts/arrayToTree.js"></script> -->
+    <script src="scripts/utils.js" defer></script>
     <script src="scripts/lodash.min.js" defer></script>
     <!-- highlight js syntax highlighter -->
     <!-- preview more themes on https://highlightjs.org/static/demo/ -->
@@ -108,8 +109,8 @@
             <!-- snippets -->
             <div class="col-md-2" id="snippets" v-if="model.user">
                 <!-- :style="{'background': 'linear-gradient(to right,'+ model.currentNote?.color + ', #ffd000)'}" -->
-                <div class="header" :style="[{'border-bottom': '3px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'40, #fff 30%)'}]" >
-                    {{model.currentNote?.title}}
+                <div class="header" :style="getNoteHeaderStyle(editingSnippet, model.currentSnippet, model.currentNote)" >
+                    <span class="title" :style="getNoteHeaderTitleStyle(editingSnippet, model.currentSnippet, model.currentNote)">{{model.currentNote?.title}}</span>
                     <div class="cmds" v-if="model.currentNote">
                         <span class="icon" @click="editNotebook(model.currentNote)"><i class="icon-dot-3" alt="Configure" title="Configure" style="transform: rotate(90deg); display:inline-block"></i></span>
                     </div>

@@ -38,21 +38,25 @@ html, body {
 #notebooks .notebook:hover {color: coral;}
 #notebooks .notebook .count {float:right; font-size:0.8rem;}
 #notebooks .title {margin-left: 0.5rem; margin-bottom: 10px; display: inline-block; color: darkgray; font-weight: bold; font-size: 0.9rem; text-transform: uppercase;  letter-spacing: 0.1rem;}
+
+
+#snippets .header {height: 50px; border-bottom: 0px solid lightgray; /*padding: 10px 15px; background-color: #fff;*/ z-index: 9; position: relative; overflow: hidden;}
+#snippets .header .title { display: block;  /* color: white; */ height: 47px; padding-top: 10px; padding-left: 10px;}
+#snippets .header .cmds {position: absolute; right: 0px; top: 7px;}
 #snippets .snippet {border-bottom: 1px solid lightgray; line-height: 1.2rem; font-size:0.95rem; padding-top: 8px; padding-bottom: 7px; max-height: 68px; cursor: pointer;  }
 #snippets .snippet.selected {background-color: #f1f1f1; padding-left: 15px; border-left: 5px solid #ffd000;}
 
-#snippet .header, #snippets .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px; background-color: #fff; z-index: 9; position: relative; }
-#snippets .header {overflow: hidden;}
-#snippets .header .cmds {position: absolute; right: 0px; top: 7px;}
+
+#snippet .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px; background-color: #fff; z-index: 9; position: relative; }
 #snippet .header.active {box-shadow: 0px 2px 8px 1px rgb(255 152 0 / 31%); background: linear-gradient(9deg, #ffd00026, #fff 30%); border-left: 0px solid #ffd000;}
 @media screen and (max-width: 991px) {
   /* separate content from menu to be more visible on mobile */
   #snippet .header.active {border-top: 0px solid #666; background: none;}
   #snippet .header.active.editing {border-top: 0;}
 }
+
 #snippet .header.editing {position:fixed; width:100%; z-index:99; top: 0; 
   background-color: #ffd000; background: linear-gradient(to left, #ffb300, #ffd000); box-shadow: 1px 6px 8px 0px rgb(255 152 0 / 22%) }
-
 #snippet .header .cmds, #snippet .metadata .cmds {float: right; display:flex;}/* flex removes whitespace between inlineblock elements */
 #snippet .header .cmds {margin-top: -5px;}
 #snippet .header.editing .cmds {/*margin-top: -5px;*/ position:fixed; top: 10px; right: 15px; z-index:100;}
