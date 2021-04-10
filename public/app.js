@@ -591,11 +591,23 @@ var vm = new Vue({
             return snippet.color;
         },
         getSnippetHeaderStyle: function(editingSnippet, currentSnippet, currentNote){
-            // inline :style="getSnippetHeaderStyle(editingSnippet, model.currentSnippet, model.currentNote)[{'border-bottom': '3px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'20, #fff 30%)'}]">
-            // style will override editing yellow mode so we are conditioning it here
-            if (editingSnippet)
-                return [{'border-bottom': '3px solid '+ this.getSnippetColor(currentNote)}];
-            return [{'border-bottom': '3px solid '+ this.getSnippetColor(currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ this.getSnippetColor(currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ this.getSnippetColor(currentNote) +'20, #fff 30%)'}];
+            let bgcolor = this.getSnippetColor(currentNote);
+            // let bgcolor = 'transparent';
+            // if (currentSnippet){
+            //     var parent = this.filteredNotes.find(n => n.id == currentSnippet.parent);
+            //     let bgcolor = this.getSnippetColor(parent);
+            // }
+            if (window.innerWidth > 991){
+                // inline :style="getSnippetHeaderStyle(editingSnippet, model.currentSnippet, model.currentNote)[{'border-bottom': '3px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'20, #fff 30%)'}]">
+                // gradient mode
+                // style will override editing yellow mode so we are conditioning it here
+                if (editingSnippet)
+                    return [{'border-bottom': '3px solid '+ bgcolor}];
+                return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(9deg, '+ bgcolor +'20, #fff 30%)'}];
+            } else {
+                // full color mode to make separation of snippet/list more obvious
+                return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(90deg, '+ bgcolor +'55, #fff 80%)'}];
+            }
         },
         // move up/down
         reorderNotebook(notebook, direction){
