@@ -594,7 +594,7 @@ var vm = new Vue({
             // :style="[{'border-bottom': '3px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'40, #fff 30%)'}]"
             // let bgcolor = this.getSnippetColor(currentNote);
             let bgcolor = this.getSnippetColor(currentNote);
-            return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(9deg, '+ bgcolor +'30, #fff 30%)'}];
+            return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(9deg, '+ bgcolor +'50, #fff 30%)'}];
         },
         getSnippetHeaderStyle: function(editingSnippet, currentSnippet, currentNote){
             // let bgcolor = this.getSnippetColor(currentNote);
@@ -609,7 +609,7 @@ var vm = new Vue({
                 if (editingSnippet)
                     return [{'border-bottom': '3px solid '+ bgcolor}];
                 // gradient mode
-                return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(9deg, '+ bgcolor +'20, #fff 30%)'}];
+                return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(9deg, '+ bgcolor +'30, #fff 30%)'}];
             } else {
                 // full color mode to make separation of snippet/list more obvious
                 return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(90deg, '+ bgcolor +'55, #fff 80%)'}];
