@@ -40,7 +40,7 @@ html, body {
 #notebooks .title {margin-left: 0.5rem; margin-bottom: 10px; display: inline-block; color: darkgray; font-weight: bold; font-size: 0.9rem; text-transform: uppercase;  letter-spacing: 0.1rem;}
 
 
-#snippets .header {height: 50px; border-bottom: 0px solid lightgray; /*padding: 10px 15px; background-color: #fff;*/ z-index: 9; position: relative; overflow: hidden;}
+#snippets .header {height: 50px; border-bottom: 0px solid lightgray; padding: 10px 15px; background-color: #fff; z-index: 9; position: relative; overflow: hidden;}
 #snippets .header .title { display: block;  /* color: white; */ height: 47px; padding-top: 10px; padding-left: 10px;}
 #snippets .header .cmds {position: absolute; right: 0px; top: 7px;}
 #snippets .snippet {border-bottom: 1px solid lightgray; line-height: 1.2rem; font-size:0.95rem; padding-top: 8px; padding-bottom: 7px; max-height: 68px; cursor: pointer;  }

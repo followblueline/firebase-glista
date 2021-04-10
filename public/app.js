@@ -594,27 +594,7 @@ var vm = new Vue({
             // :style="[{'border-bottom': '3px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'40, #fff 30%)'}]"
             // let bgcolor = this.getSnippetColor(currentNote);
             let bgcolor = this.getSnippetColor(currentNote);
-            if (currentSnippet && currentNote){
-                // if new note is selected with currentSnippet open, make gradient to both colors
-                var parent = this.filteredNotes.find(n => n.id == currentSnippet.parent);
-                let snippetParentColor = this.getSnippetColor(parent);
-                return [{'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(90deg, '+ bgcolor +', '+  snippetParentColor +' 90%)'}];
-            } else {
-                // inline :style="getSnippetHeaderStyle(editingSnippet, model.currentSnippet, model.currentNote)[{'border-bottom': '3px solid '+ getSnippetColor(model.currentNote)}, {'box-shadow': '0px 2px 8px 1px '+ getSnippetColor(model.currentNote)+'40'}, {'background': 'linear-gradient(9deg, '+ getSnippetColor(model.currentNote) +'20, #fff 30%)'}]">
-                // style will override editing yellow mode so we are conditioning it here
-                if (editingSnippet)
-                    return [{'border-bottom': '3px solid '+ bgcolor}];
-                // gradient mode
-                return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(9deg, '+ bgcolor +'30, #fff 30%)'}];
-            }
-        },
-        getNoteHeaderTitleStyle: function(editingSnippet, currentSnippet, currentNote){
-            let bgcolor = this.getSnippetColor(currentNote);
-            if (!bgcolor || !bgcolor.includes('#'))
-                return '#fff';
-            let hsl = rgbToHsl(parseInt(bgcolor.substr(1,2), 16),parseInt(bgcolor.substr(3,2),16),parseInt(bgcolor.substr(5,2),16));
-            let rgbLighter = hslToRgb(hsl[0], hsl[1], 0.85);
-            return [{'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(9deg, rgb('+ rgbLighter[0] +','+rgbLighter[1]+','+rgbLighter[2] +'), #ffffff 30%)'}];
+            return [{'border-bottom': '3px solid '+ bgcolor}, {'box-shadow': '0px 2px 8px 1px '+ bgcolor +'40'}, {'background': 'linear-gradient(9deg, '+ bgcolor +'30, #fff 30%)'}];
         },
         getSnippetHeaderStyle: function(editingSnippet, currentSnippet, currentNote){
             // let bgcolor = this.getSnippetColor(currentNote);
