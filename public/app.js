@@ -211,7 +211,9 @@ var vm = new Vue({
                 this.$nextTick().then(() => {
                     this.model.currentSnippet = snippet;
                     if (snippet.lang == this.enums.lang.markdown){
-                        
+                        this.$nextTick().then(() => {
+                            mermaid.init();                        
+                        });
                     }else {
                         this.highlightCode(snippet);
                     }
@@ -220,6 +222,7 @@ var vm = new Vue({
         },
         // highlight presentation code in viewer
         highlightCode: function(snippet){
+            console.log('highlightCode', snippet ? snippet.lang : null);
             if (!snippet) return;
             //this.$nextTick().then(() => {
                 // highlighter rebuilds  pre > code element and vue is not registering content change
