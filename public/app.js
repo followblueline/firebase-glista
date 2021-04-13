@@ -67,11 +67,6 @@ var vm = new Vue({
         }
     },
     watch: {
-        "model.currentSnippet": function(snippet){
-            
-                            //this.initSnipetViewer(this.model.currentSnippet);  // cancel btn
-
-        }
     },
     methods:{
         resetErrors: function(){
@@ -238,7 +233,7 @@ var vm = new Vue({
         },
         // highlight presentation code in viewer
         highlightCode: function(snippet){
-            console.log('highlightCode', snippet ? snippet.lang : null);
+            // console.log('highlightCode', snippet ? snippet.lang : null);
             if (!snippet) return;
             //this.$nextTick().then(() => {
                 // highlighter rebuilds  pre > code element and vue is not registering content change
