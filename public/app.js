@@ -66,6 +66,13 @@ var vm = new Vue({
             return [];
         }
     },
+    watch: {
+        "model.currentSnippet": function(snippet){
+            
+                            //this.initSnipetViewer(this.model.currentSnippet);  // cancel btn
+
+        }
+    },
     methods:{
         resetErrors: function(){
             this.model.errors = [];
@@ -210,15 +217,24 @@ var vm = new Vue({
             if (snippet){
                 this.$nextTick().then(() => {
                     this.model.currentSnippet = snippet;
-                    if (snippet.lang == this.enums.lang.markdown){
-                        this.$nextTick().then(() => {
-                            mermaid.init();                        
-                        });
-                    }else {
-                        this.highlightCode(snippet);
-                    }
+                    this.initSnipetViewer(snippet);
                 });
             }
+        },
+        // things to do in viewer
+        initSnipetViewer: function(snippet){
+            if (!snippet) return;
+            
+            //this.$nextTick().then(() => {
+                //this.model.currentSnippet = snippet;
+                if (snippet.lang == this.enums.lang.markdown){
+                    this.$nextTick().then(() => {
+                        mermaid.init();                        
+                    });
+                }else {
+                    this.highlightCode(snippet);
+                }
+           // });
         },
         // highlight presentation code in viewer
         highlightCode: function(snippet){
@@ -243,12 +259,16 @@ var vm = new Vue({
         // open snippet in editor. content is cloned from current snippet so we can restore it on cancel without rereading it from db
         editSnippet: function(snippet){
             if (!snippet){
+                // cancel btn
                 if (this.model.codeMirrorRef){
                     this.model.codeMirrorRef.off('change');
                     this.model.codeMirrorRef.toTextArea(); // prevent submit handler memory leak
                 }
-                this.model.currentSnippetInEditor = null; // cancel btn
-                this.highlightCode(this.model.currentSnippet); // cancel btn
+                this.model.currentSnippetInEditor = null; // hide editor
+                this.$nextTick(() => {
+                    // wait until model changes then rerun init to run highlighter again (DOM was destroyed and rewritten)
+                    this.initSnipetViewer(this.model.currentSnippet);
+                });
             } else {
                 this.model.currentSnippetInEditor = this.cloneDeep(snippet) // edit
                 //vm.$forceUpdate();
