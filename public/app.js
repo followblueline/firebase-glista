@@ -552,7 +552,7 @@ var vm = new Vue({
             if (this.model.searchText.length == 0) return;
             let text = this.model.searchText.toLowerCase();
             // put search results under virtual note
-            let resContainer = this.createEmptySnippet();
+            let resContainer = glista.createEmptySnippet();
             resContainer.id = 'searchTmp';
             resContainer.title = 'Search results';
             let res = [];
