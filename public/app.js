@@ -46,6 +46,9 @@ var vm = new Vue({
       }
     },
     computed:{
+        inSearchMode: function(){
+            return this.model.searchResults != null;
+        },
         editingSnippet: function(){
             return this.model.currentSnippetInEditor != null;
         },
@@ -75,7 +78,8 @@ var vm = new Vue({
         selectNotebook: function(note){
             if (note && typeof(note.color) === 'undefined')
                 note.color = 'transparent';
-            this.model.searchResults = null; // reset
+            if (note.id != "searchTmp")
+                this.resetSearch();
             this.model.currentNote = note;
         },
         createNotebook: function(){
@@ -561,21 +565,29 @@ var vm = new Vue({
             for(let i=0,j=this.model.notes.length;i<j;i++){
                 if (this.model.notes[i].title && this.model.notes[i].title.toLowerCase().indexOf(text) > -1){
                     let snippet = this.cloneDeep(this.model.notes[i]);
-                    snippet.parent = resContainer.id;
                     titles.push(snippet);
                 } else if (this.model.notes[i].content && this.model.notes[i].content.toLowerCase().indexOf(text) > -1) {
                     let snippet = this.cloneDeep(this.model.notes[i]);
-                    snippet.parent = resContainer.id;
                     contents.push(this.model.notes[i]);
                 }
             }
             res.push(...titles);
             res.push(...contents);
             this.selectNotebook(resContainer);
-            if (res.length > 0)
+            if (res.length > 0){
                 this.model.searchResults = res;
-            else
+            } else {
                 this.feedbackError(null, 'No results for ' + text);
+                this.model.searchResults = [];
+            }
+        },
+        resetSearch: function(){
+            this.model.searchResults = null; // reset
+            this.model.searchText = '';
+        },
+        getSnippetParentTitle: function(snippet){
+            let parent = this.model.notes.find(x => x.id == snippet.parent);
+            return parent ? parent.title : '';
         },
         toggleZebraStripes: function(){
             this.state.showZebraStripes = !this.state.showZebraStripes;

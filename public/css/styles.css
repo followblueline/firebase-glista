@@ -78,7 +78,7 @@ html, body {
 .snippetList .list-group-item:hover {background-color: #ffd000; -webkit-transition: all 0.2s ease-in-out; transition: all 0.2s ease-in-out;}
 .snippetList .link-unstyled, .link-unstyled:link, .link-unstyled:hover {color: inherit; text-decoration: inherit;}
 .snippetList .icon-favorite {color: lightgrey; font-size: 12px; position: absolute; top: 0; right: 0;}
-
+.snippetList .parentTitle { position: absolute; right: 2px; font-size: 11px; top: -4px; color: #ccc;}
 
 .btn-xs{ padding: 1px 5px !important; font-size: 12px !important; line-height: 1.5 !important; border-radius: 3px !important; }
 .btn-shadow { box-shadow: 3px 4px 6px -1px rgb(0 0 255 / 20%);}
