@@ -8,6 +8,7 @@ var appSettings = (function(){
         descriptionMaxLength: 4000,
         contentMaxLength: 100000
       },
+      hashSeed: 'banana',
       noteColors:[
           // https://www.w3schools.com/colors/colors_names.asp
           {name: 'Maroon', code: '#800000'},

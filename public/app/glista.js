@@ -47,13 +47,29 @@ let glista = (function(){
         return validateNote(item, appSettings.enums.noteType.snippet);
     }
 
+    let setCurrentSnippetUrl = function(snippet){
+        let hash = hashFnv32a(snippet.id, true, appSettings.config.hashSeed);
+        history.pushState({id: snippet.id}, snippet.title, "?view=" + snippet.id + hash);
+    }
+
+    let getCurrentSnippetIdFromUrl = function(hashedDocId){
+        if (!hashedDocId) return null;
+        let hashExisting = hashedDocId.substr(-8);
+        let docId = hashedDocId.substr(0, hashedDocId.length - 8);
+        // rehash again to check for integrity
+        if (hashExisting != hashFnv32a(docId, true, appSettings.config.hashSeed)) return null;
+        return docId;
+    }
+
     return {
         createEmptySnippet: createEmptySnippet,
         logme: logme,
         // return: errors[]
         validateNote: validateNote,
         // return: errors[]
-        validateSnippet: validateSnippet
+        validateSnippet: validateSnippet,
+        setCurrentSnippetUrl: setCurrentSnippetUrl,
+        getCurrentSnippetIdFromUrl: getCurrentSnippetIdFromUrl
     }
 })();
 

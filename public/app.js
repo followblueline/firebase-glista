@@ -217,6 +217,8 @@ var vm = new Vue({
                 this.$nextTick().then(() => {
                     this.model.currentSnippet = snippet;
                     this.initSnipetViewer(snippet);
+                    if (snippet.id)
+                        glista.setCurrentSnippetUrl(snippet); // dont trigger on create snippet
                 });
             }
         },
@@ -435,12 +437,30 @@ var vm = new Vue({
                     note.order = isNaN(note.order) ? 0 : note.order; // default value
                     items.push(note);
                 });
-                // build tree
-                self.model.notes = this.sortNotes(items);// arrayToTree(items);
+
+                self.model.notes = this.sortNotes(items);
+
+                // restore last view
+                const urlParams = new URLSearchParams(window.location.search);
+                let viewSnippet = urlParams.get('view');
+                if (viewSnippet){
+                    let id = glista.getCurrentSnippetIdFromUrl(viewSnippet);
+                    if (id)
+                        this.restoreLastView(id);
+                }
             })
             .catch((error) => {
                 self.feedbackError(error, "Error getting documents.");
             });
+        },
+        restoreLastView: function(id){
+            if (!id) return;
+            let snippet = this.model.notes.find(x => x.id == id);
+            if (snippet){
+                let parent = this.model.notes.find(x => x.id == snippet.parent);
+                this.selectNotebook(parent);
+                this.selectSnippet(snippet);
+            }
         },
         sortNotes: function(notes){
             return notes.sort(function(a, b)  {
@@ -601,6 +621,7 @@ var vm = new Vue({
                 
             if (localStorage.getItem(this.enums.storage.skin) != null)
                 this.state.skin = localStorage.getItem(this.enums.storage.skin);
+            
         },
         toggleSkin: function(){
             this.state.skin = this.state.skin == this.enums.skin.darkblue ? this.enums.skin.light : this.enums.skin.darkblue;
