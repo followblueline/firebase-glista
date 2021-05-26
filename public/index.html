@@ -135,7 +135,7 @@
                         <span v-if="inSearchMode" class="parentTitle">{{getSnippetParentTitle(snippet)}}</span>
                     </li>
                 </ul>
-                <div v-if="!model.currentNote || !snippets || snippets.length == 0" style="opacity:0.2;text-align: center;">
+                <div v-if="!model.currentNote || filteredSnippets.length == 0" style="opacity:0.2;text-align: center;">
                     <img src="images/noapple.JPG" width="50" alt="no records">
                 </div>
             </div>
