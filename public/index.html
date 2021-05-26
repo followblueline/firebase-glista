@@ -67,7 +67,7 @@
 <body>
 
     <div id="app" :class="['container-fluid', 'pl-0', 'pr-0', state.skin]">
-        <div class="row no-gutters" style="min-height:100%;">
+        <div class="row no-gutters" style="min-height:100%;" v-cloak>
             <!-- notebook column -->
             <div class="col-md-2" id="notebooks">
                 <div class="header d-flex justify-content-center_remove_to_float">
@@ -84,7 +84,7 @@
                     -->
                     <button v-if="model.user" @click="onSignOut" class="btn btn-secondary btn-xs">Sign Out</button>
                     <button v-if="!model.user" @click="onGoogleSignIn" class="btn btn-secondary btn-xs">Google Sign In</button>
-                    <button v-if="!model.user" @click="onEmailPassSignIn" class="btn btn-secondary btn-xs">Email/pass Sign In</button>
+                    <!-- <button v-if="!model.user" @click="onEmailPassSignIn" class="btn btn-secondary btn-xs">Email/pass Sign In</button> -->
                 </div>
                 <div class="clear"></div>
                 <!--<hr>-->
@@ -135,7 +135,7 @@
                         <span v-if="inSearchMode" class="parentTitle">{{getSnippetParentTitle(snippet)}}</span>
                     </li>
                 </ul>
-                <div v-if="!model.currentNote || snippets.length == 0" style="opacity:0.2;text-align: center;">
+                <div v-if="!model.currentNote || !snippets || snippets.length == 0" style="opacity:0.2;text-align: center;">
                     <img src="images/noapple.JPG" width="50" alt="no records">
                 </div>
             </div>
@@ -255,7 +255,7 @@
         </div>
 
         <!-- notebook edit -->
-        <modal_note id="notebook_edit" vcloak v-show="state.showModalNote" v-if="model.user && model.currentNoteInEditor">
+        <modal_note id="notebook_edit" v-cloak v-show="state.showModalNote" v-if="model.user && model.currentNoteInEditor">
             <template slot="header">
                 <h1>{{model.currentNoteInEditor.id ? 'Edit note' : 'New note'}}</h1>
             </template>
