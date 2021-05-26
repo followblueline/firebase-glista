@@ -197,7 +197,7 @@
                         
                         <div class="cmds">
                             <span v-if="editingSnippet" class="charCount">Chars: {{model.editorCharCount.format(0,3,'.')}}</span>
-                            <span v-if="model.currentSnippet && !editingSnippet" class="charCount">Chars: {{model.currentSnippet.content.length.format(0,3,'.')}}</span>
+                            <span v-if="model.currentSnippet && model.currentSnippet.content && !editingSnippet" class="charCount">Chars: {{model.currentSnippet.content.length.format(0,3,'.')}}</span>
                             <!-- <i class="icon-link"></i> -->
                             <i v-if="model.currentSnippet" @click="copyToClipboard()" class="icon icon-clipboard-regular" title="Copy to clipboard"></i>
                             <i v-if="model.currentSnippet" @click="cloneSnippet(model.currentSnippet)" class="icon icon-clone" title="Clone snippet" style="margin-top:2px"></i>

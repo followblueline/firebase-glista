@@ -101,8 +101,8 @@ html, body {
 
 /* markdown styling */
 #snippet .content .markdown {padding:0.5em;}
-#snippet .content .markdown h1 {font-size: 2rem}
-#snippet .content .markdown h2 {font-size: 1.55rem}
+#snippet .content .markdown h1 {font-size: 1.9rem; margin: 30px 0 20px 0;}
+#snippet .content .markdown h2 {font-size: 1.50rem}
 #snippet .content .markdown h3 {font-size: 1.2rem}
 #snippet .content .markdown table {margin-bottom: 10px;}
 #snippet .content .markdown table, #snippet .content .markdown table th, #snippet .content .markdown table td {border: 1px solid #999;}
