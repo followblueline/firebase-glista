@@ -409,15 +409,20 @@ var vm = new Vue({
             self.model.currentSnippetInEditor.parent = parentId;
         },
         onAuthStateChanged: function(user){
-          console.log('onAuthStateChanged', user)  
-          if (user){
-              this.model.user = user;
-              this.loadNotes(user);
-          } else {
-              this.model.user = null;
-              // reset
-              this.model.notes = [];
-          }
+            console.log('onAuthStateChanged', user);
+            // clear url
+            const url = new URL(location);
+            url.searchParams.delete('view');
+            history.replaceState(null, null, url)
+            
+            if (user){
+                this.model.user = user;
+                this.loadNotes(user);
+            } else {
+                this.model.user = null;
+                // reset
+                this.model.notes = [];
+            }
         },
         loadNotes: function(user){
             let self = this;
