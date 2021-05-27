@@ -459,7 +459,31 @@ var vm = new Vue({
                 self.feedbackError(error, "Error getting documents.");
             });
         },
-        
+        loadNote: function(id){
+            let self = this;
+            // https://firebase.google.com/docs/firestore/query-data/get-data
+            // Database Reference
+            collNotes = dbNotesRef.doc(id)
+            // .where('public', "==", true)
+            // .where('id', "==", id)
+            .get()
+            .then((querySnapshot) => {
+                console.log('qs', querySnapshot);
+                // if (querySnapshot.docs && querySnapshot.docs[0]){
+                //     let  note = querySnapshot.docs[0].data();
+                //     note.id = querySnapshot.docs[0].id;
+                //     console.log('note', note);
+                // }
+                if (querySnapshot){
+                    let note = querySnapshot.data();
+                    note.id = querySnapshot.id;
+                    console.log('note', note);
+                }
+            })
+            .catch((error) => {
+                self.feedbackError(error, "Error getting document.");
+            });
+        },
         restoreLastView: function(id){
             if (!id) return;
             let snippet = this.model.notes.find(x => x.id == id);
