@@ -176,7 +176,7 @@
 
                         <template v-if="editingSnippet">
                             <span>Language</span>
-                            <select class="form-select custom-select" v-model="model.currentSnippetInEditor.lang">
+                            <select class="form-select" v-model="model.currentSnippetInEditor.lang">
                                 <option value="autodetect">Autodetect</option>
                                 <option value="plaintext">Text</option>
                                 <option value="markdown">Markdown</option>
@@ -190,7 +190,7 @@
                             </select>
                             
                             <span>in</span>
-                            <select class="form-select custom-select" onchange="vm.moveSnippet(this.value)">
+                            <select class="form-select" onchange="vm.moveSnippet(this.value)">
                                 <option v-for="note in filteredNotes" :value="note.id" :selected="note.id == model.currentNote.id">{{ note.title }}</option>
                             </select>
                         </template>
@@ -217,7 +217,7 @@
                     </div>
 
                     <div  v-if="model.currentSnippet" class="content">
-                        <div style="width: 100%;" class="error" v-if="model.errors">
+                        <div style="width: 100%;" class="error" v-if="model.errors && model.errors.length > 0">
                             <ul>
                                 <li v-for="error in model.errors">{{error}}</li>
                             </ul>

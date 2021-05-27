@@ -459,6 +459,7 @@ var vm = new Vue({
                 self.feedbackError(error, "Error getting documents.");
             });
         },
+        
         restoreLastView: function(id){
             if (!id) return;
             let snippet = this.model.notes.find(x => x.id == id);
@@ -466,6 +467,8 @@ var vm = new Vue({
                 let parent = this.model.notes.find(x => x.id == snippet.parent);
                 this.selectNotebook(parent);
                 this.selectSnippet(snippet);
+            } else {
+                // public snippet from other user?
             }
         },
         sortNotes: function(notes){
