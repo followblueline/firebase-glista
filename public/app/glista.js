@@ -52,13 +52,19 @@ let glista = (function(){
         history.pushState({id: snippet.id}, snippet.title, "?view=" + snippet.id + hash);
     }
 
-    let getCurrentSnippetIdFromUrl = function(hashedDocId){
-        if (!hashedDocId) return null;
-        let hashExisting = hashedDocId.substr(-8);
+
+    let getCurrentSnippetIdFromUrl = function(){
+        const urlParams = new URLSearchParams(window.location.search);
+        let hashedDocId = urlParams.get('view');
+        if (!hashedDocId) 
+            return null;
+
+        let urlHash = hashedDocId.substr(-8);
         let docId = hashedDocId.substr(0, hashedDocId.length - 8);
         // rehash again to check for integrity
-        if (hashExisting != hashFnv32a(docId, true, appSettings.config.hashSeed)) return null;
-        return docId;
+        if (urlHash == hashFnv32a(docId, true, appSettings.config.hashSeed)) 
+            return docId;
+        return null;
     }
 
     return {

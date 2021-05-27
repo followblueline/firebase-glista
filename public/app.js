@@ -411,23 +411,22 @@ var vm = new Vue({
         onAuthStateChanged: function(user){
             console.log('onAuthStateChanged', user);
 
-
             if (user){
                 this.model.user = user;
                 this.loadNotes(user);
             } else {
                 this.model.user = null;
-            // reset
-            this.model.notes = [];
-            this.model.user = null;
-            this.model.currentNote = null;
-            this.model.currentNoteInEditor = null;
-            this.model.currentSnippet = null;
-            this.model.currentSnippetInEditor = null;
-            // clear url
-            const url = new URL(location);
-            url.searchParams.delete('view');
-            history.replaceState(null, null, url);
+                // reset
+                this.model.notes = [];
+                this.model.user = null;
+                this.model.currentNote = null;
+                this.model.currentNoteInEditor = null;
+                this.model.currentSnippet = null;
+                this.model.currentSnippetInEditor = null;
+                // clear url
+                const url = new URL(location);
+                url.searchParams.delete('view');
+                history.replaceState(null, null, url);
             }
         },
         loadNotes: function(user){
@@ -452,13 +451,9 @@ var vm = new Vue({
                 self.model.notes = this.sortNotes(items);
 
                 // restore last view
-                const urlParams = new URLSearchParams(window.location.search);
-                let viewSnippet = urlParams.get('view');
-                if (viewSnippet){
-                    let id = glista.getCurrentSnippetIdFromUrl(viewSnippet);
-                    if (id)
-                        this.restoreLastView(id);
-                }
+                let id = glista.getCurrentSnippetIdFromUrl();
+                if (id)
+                    this.restoreLastView(id);
             })
             .catch((error) => {
                 self.feedbackError(error, "Error getting documents.");

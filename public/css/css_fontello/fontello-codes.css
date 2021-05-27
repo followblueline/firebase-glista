@@ -20,6 +20,10 @@
 .icon-clipboard-regular:before { content: '\e812'; } /* '' */
 .icon-plus-1:before { content: '\e813'; } /* '' */
 .icon-minus-1:before { content: '\e814'; } /* '' */
+.icon-eye:before { content: '\e815'; } /* '' */
+.icon-eye-off:before { content: '\e816'; } /* '' */
+.icon-print:before { content: '\e817'; } /* '' */
+.icon-cog-alt:before { content: '\e818'; } /* '' */
 .icon-link-ext:before { content: '\f08e'; } /* '' */
 .icon-docs:before { content: '\f0c5'; } /* '' */
 .icon-menu:before { content: '\f0c9'; } /* '' */

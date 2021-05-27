@@ -56,6 +56,7 @@
     <script src="app/glista.js" defer></script>
     <script src="app.js" defer></script>
     <!-- to modify icon selection go to fontello.com, wrench icon >  import config.json from \public\css\fontello folder -->
+    <!-- https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <!-- our modal -->
     <script src="components/modalGeneric.js"></script>
@@ -175,7 +176,7 @@
 
                         <template v-if="editingSnippet">
                             <span>Language</span>
-                            <select class="form-select" v-model="model.currentSnippetInEditor.lang">
+                            <select class="form-select custom-select" v-model="model.currentSnippetInEditor.lang">
                                 <option value="autodetect">Autodetect</option>
                                 <option value="plaintext">Text</option>
                                 <option value="markdown">Markdown</option>
@@ -189,7 +190,7 @@
                             </select>
                             
                             <span>in</span>
-                            <select class="form-select" onchange="vm.moveSnippet(this.value)">
+                            <select class="form-select custom-select" onchange="vm.moveSnippet(this.value)">
                                 <option v-for="note in filteredNotes" :value="note.id" :selected="note.id == model.currentNote.id">{{ note.title }}</option>
                             </select>
                         </template>
@@ -204,6 +205,10 @@
                             <i v-if="model.currentSnippet && !editingSnippet" @click="toggleZebraStripes()" :class="['icon', 'icon-menu', {selected: state.showZebraStripes }]" title="Show zebra stripes for code"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-1" title="Increase font size" style="margin-top:2px"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-1" title="Decrease font size" style="margin-top:2px"></i>
+                            
+                            <!-- <i class="icon icon-eye-off" title="Decrease font size" style="margin-top:2px"></i> -->
+                            <!-- <i class="icon icon-print" title="Decrease font size" style="margin-top:2px"></i> -->
+                            <!-- <i class="icon icon-link" title="Decrease font size" style="margin-top:2px"></i> -->
                         </div>
                     </div>
 
