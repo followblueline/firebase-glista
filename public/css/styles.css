@@ -48,6 +48,7 @@ html, body {
 
 
 #snippet .header {height: 50px; border-bottom: 1px solid lightgray; padding: 10px 15px; background-color: #fff; z-index: 9; position: relative; }
+#snippet .header .thirdPartySnippet {font-size: 0.9rem; padding-right: 20px;  color: #ff3d00;}
 #snippet .header.active {box-shadow: 0px 2px 8px 1px rgb(255 152 0 / 31%); background: linear-gradient(9deg, #ffd00026, #fff 30%); border-left: 0px solid #ffd000;}
 @media screen and (max-width: 991px) {
   /* separate content from menu to be more visible on mobile */
@@ -78,6 +79,7 @@ html, body {
 .snippetList .list-group-item:hover {background-color: #ffd000; -webkit-transition: all 0.2s ease-in-out; transition: all 0.2s ease-in-out;}
 .snippetList .link-unstyled, .link-unstyled:link, .link-unstyled:hover {color: inherit; text-decoration: inherit;}
 .snippetList .icon-favorite {color: lightgrey; font-size: 12px; position: absolute; top: 0; right: 0;}
+.snippetList .icon-public {color: lightgrey; font-size: 12px; position: absolute; top: 0; right: 15px;}
 .snippetList .parentTitle { position: absolute; right: 2px; font-size: 11px; top: -4px; color: #ccc;}
 
 .btn-xs{ padding: 1px 5px !important; font-size: 12px !important; line-height: 1.5 !important; border-radius: 3px !important; }

@@ -67,7 +67,12 @@ var vm = new Vue({
             if (this.model.currentNote)
                 return this.model.notes.filter(x => x.parent == this.model.currentNote.id);
             return [];
+        },
+        // check if somebody else's public snippet
+        thirdPartySnippetAuthor: function(){
+            return this.model.currentSnippet.uid != this.model.user.uid ? this.model.currentSnippet.author : null;
         }
+
     },
     watch: {
     },
@@ -208,6 +213,7 @@ var vm = new Vue({
             self.selectSnippet(snippet); // select new snippet
             self.editSnippet(snippet);// immediately open in editor
         },
+
         selectSnippet: function(snippet){
             this.editSnippet(null); // hide editor
             // highlighter rebuilds  pre > code element and vue is not registering content change
@@ -217,7 +223,7 @@ var vm = new Vue({
                 this.$nextTick().then(() => {
                     this.model.currentSnippet = snippet;
                     this.initSnipetViewer(snippet);
-                    if (snippet.id)
+                    if (snippet.id && snippet.uid == this.model.user.uid )
                         glista.setCurrentSnippetUrl(snippet); // dont trigger on create snippet
                 });
             }
@@ -293,12 +299,22 @@ var vm = new Vue({
                 } else if(this.model.currentSnippet) {
                     this.model.currentSnippetInEditor = this.cloneDeep(this.model.currentSnippet);
                     this.model.currentSnippetInEditor.id = null;
+
+                    if (this.thirdPartySnippetAuthor){
+                        this.model.currentSnippetInEditor.author = null;
+                        this.model.currentSnippetInEditor.parent = null;
+                        this.model.currentSnippetInEditor.public = null;
+                        this.model.currentSnippetInEditor.uid = this.model.user.uid;
+                        this.model.currentSnippet = this.cloneDeep(this.model.currentSnippetInEditor);
+                    }
+                    
                     this.editSnippet(this.model.currentSnippetInEditor);
                 }
             }
         },
         // highlight code in editor
         loadCodeEditor: function(snippet){
+            if (!snippet) return;
             // codemirror init https://codemirror.net/doc/manual.html
             this.model.codeMirrorRef = CodeMirror.fromTextArea(document.getElementById("formContent"), {
                 lineNumbers: true,
@@ -453,12 +469,13 @@ var vm = new Vue({
                 // restore last view
                 let id = glista.getCurrentSnippetIdFromUrl();
                 if (id)
-                    this.restoreLastView(id);
+                    this.restoreViewFromUrl(id);
             })
             .catch((error) => {
                 self.feedbackError(error, "Error getting documents.");
             });
         },
+        // load public note
         loadNote: function(id){
             let self = this;
             // https://firebase.google.com/docs/firestore/query-data/get-data
@@ -478,13 +495,30 @@ var vm = new Vue({
                     let note = querySnapshot.data();
                     note.id = querySnapshot.id;
                     console.log('note', note);
+                    self.selectSnippet(note);
                 }
             })
             .catch((error) => {
                 self.feedbackError(error, "Error getting document.");
             });
         },
-        restoreLastView: function(id){
+        setSnippetPrivacy: function(snippet, public){
+            var self = this;
+            snippet.public = public;
+            var docRef = dbNotesRef.doc(snippet.id);
+                docRef.update({
+                    public: snippet.public,
+                    author: this.model.user.displayName
+                })
+                .then(function() {
+                    //`foo ${vm.model.user.displayName} .`
+                    self.feedbackOk(`Snippet is now ${public ? 'public' : 'private'}.`);
+                })
+                .catch((error) => {
+                    self.feedbackError(error, "Error updating public status.");
+                });
+        },
+        restoreViewFromUrl: function(id){
             if (!id) return;
             let snippet = this.model.notes.find(x => x.id == id);
             if (snippet){
@@ -493,6 +527,7 @@ var vm = new Vue({
                 this.selectSnippet(snippet);
             } else {
                 // public snippet from other user?
+                this.loadNote(id);
             }
         },
         sortNotes: function(notes){

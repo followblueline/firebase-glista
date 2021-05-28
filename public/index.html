@@ -130,6 +130,7 @@
                     <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
                         v-for="snippet in filteredSnippets" @click="selectSnippet(snippet)">{{ snippet.title }}
                         <span v-if="snippet.favorite" class="icon-favorite"><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
+                        <span v-if="snippet.public" class="icon-public"><i class="icon-eye" alt="Public snippet" title="Public snippet"></i></span>
                     </li>
                     <li :class="['list-group-item snippet', {selected: model.currentSnippet?.id == snippet.id}]" 
                         v-for="snippet in model.searchResults" @click="selectSnippet(snippet)">{{ snippet.title }}
@@ -157,11 +158,16 @@
                             </template>
 
                             <template v-if="!editingSnippet">
+                                <span v-if="thirdPartySnippetAuthor" class="thirdPartySnippet">(public snippet by {{thirdPartySnippetAuthor ?? 'unknown'}})</span>
                                 <span class="title">{{model.currentSnippet.title}}</span>
-                                <div class="cmds">
+                                <div class="cmds" v-if="!thirdPartySnippetAuthor">
                                     <span class="icon" @click="editSnippet(model.currentSnippet)"><i class="icon-edit" alt="Edit" title="Edit"></i></span>
                                     <span :class="['icon', {'selected': model.currentSnippet.favorite}]" @click="toggleSnippetFavorite(model.currentSnippet)"><i class="icon-star-empty" alt="Favorite" title="Favorite"></i></span>
                                     <span class="icon" @click="deleteSnippet(model.currentSnippet)"><i class="icon-trash-empty" alt="Delete" title="Delete"></i></span>
+                                    <span class="icon" @click="setSnippetPrivacy(model.currentSnippet, !model.currentSnippet.public)">
+                                        <i v-if="model.currentSnippet.public" class="icon icon-eye" title="Public snippet" style="margin-top:2px"></i>
+                                        <i v-if="!model.currentSnippet.public" class="icon icon-eye-off" title="Private snippet" style="margin-top:2px"></i>
+                                    </span>
                                 </div>
                             </template>
                         </template>
@@ -191,7 +197,7 @@
                             
                             <span>in</span>
                             <select class="form-select" onchange="vm.moveSnippet(this.value)">
-                                <option v-for="note in filteredNotes" :value="note.id" :selected="note.id == model.currentNote.id">{{ note.title }}</option>
+                                <option v-for="note in filteredNotes" :value="note.id" :selected="note.id == model.currentNote?.id">{{ note.title }}</option>
                             </select>
                         </template>
                         
@@ -206,7 +212,6 @@
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-1" title="Increase font size" style="margin-top:2px"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-1" title="Decrease font size" style="margin-top:2px"></i>
                             
-                            <!-- <i class="icon icon-eye-off" title="Decrease font size" style="margin-top:2px"></i> -->
                             <!-- <i class="icon icon-print" title="Decrease font size" style="margin-top:2px"></i> -->
                             <!-- <i class="icon icon-link" title="Decrease font size" style="margin-top:2px"></i> -->
                         </div>
