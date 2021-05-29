@@ -101,9 +101,10 @@
                 
                 <!-- notebook list -->
                 <div v-if="model.user">
-                    <span class="title">Folders</span>
-                    <span style="float:right" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" title="Create folder"></i></span>
-                    
+                    <div class="foldersTitleContainer">
+                        <span class="title">Folders</span>
+                        <span style="float:right;" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" style="font-size: 20px;" title="Create folder"></i></span>
+                    </div>
                     <ul class="list-group notebookList list-group-flush">
                         <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
                         v-for="note in filteredNotes" @click="selectNotebook(note)"><i class="icon icon-circle" :style="{'color':getNotebookColor(note)}"></i>{{ note.title }} <span class="count">{{getChildCount(note)}}</span></li>
@@ -143,7 +144,7 @@
             </div>
 
             <!-- current snippet presentation & editor -->
-            <div class="col-lg-8" id="snippet" v-if="model.user">
+            <div class="col-lg-8" id="snippet" v-if="allowDisplay">
                 <!-- prevent submit, vue will do the job -->
                 <form v-on:submit.prevent>
                     <div :class="['header', {'editing': editingSnippet}, {'active': model.currentSnippet}]" :style="getSnippetHeaderStyle(editingSnippet, model.currentSnippet, model.currentNote)">
@@ -197,6 +198,7 @@
                             
                             <span>in</span>
                             <select class="form-select" onchange="vm.moveSnippet(this.value)">
+                                <option value="">- root folder -</option>
                                 <option v-for="note in filteredNotes" :value="note.id" :selected="note.id == model.currentNote?.id">{{ note.title }}</option>
                             </select>
                         </template>
@@ -207,7 +209,7 @@
                             <span v-if="model.currentSnippet && model.currentSnippet.content && !editingSnippet" class="charCount">Chars: {{model.currentSnippet.content.length.format(0,3,'.')}}</span>
                             <!-- <i class="icon-link"></i> -->
                             <i v-if="model.currentSnippet" @click="copyToClipboard()" class="icon icon-clipboard-regular" title="Copy to clipboard"></i>
-                            <i v-if="model.currentSnippet" @click="cloneSnippet(model.currentSnippet)" class="icon icon-clone" title="Clone snippet" style="margin-top:2px"></i>
+                            <i v-if="model.currentSnippet && model.user" @click="cloneSnippet(model.currentSnippet)" class="icon icon-clone" title="Clone snippet" style="margin-top:2px"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="toggleZebraStripes()" :class="['icon', 'icon-menu', {selected: state.showZebraStripes }]" title="Show zebra stripes for code"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(1)" class="icon icon-plus-1" title="Increase font size" style="margin-top:2px"></i>
                             <i v-if="model.currentSnippet && !editingSnippet" @click="adjustViewerFontSize(-1)" class="icon icon-minus-1" title="Decrease font size" style="margin-top:2px"></i>
@@ -221,7 +223,7 @@
                         <span>{{model.currentSnippet.description}}</span> 
                     </div>
 
-                    <div  v-if="model.currentSnippet" class="content">
+                    <div v-if="model.currentSnippet" class="content">
                         <div style="width: 100%;" class="error" v-if="model.errors && model.errors.length > 0">
                             <ul>
                                 <li v-for="error in model.errors">{{error}}</li>

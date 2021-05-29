@@ -11,7 +11,8 @@ let glista = (function(){
             tags: [],
             color: '',
             favorite: false,
-            order: 0
+            order: 0,
+            public: false
         };
         return snippet;
     }
@@ -67,6 +68,13 @@ let glista = (function(){
         return null;
     }
 
+    let clearUrl = function(){
+        // clear url
+        const url = new URL(location);
+        url.searchParams.delete('view');
+        history.replaceState(null, null, url);
+    }
+
     return {
         createEmptySnippet: createEmptySnippet,
         logme: logme,
@@ -75,7 +83,8 @@ let glista = (function(){
         // return: errors[]
         validateSnippet: validateSnippet,
         setCurrentSnippetUrl: setCurrentSnippetUrl,
-        getCurrentSnippetIdFromUrl: getCurrentSnippetIdFromUrl
+        getCurrentSnippetIdFromUrl: getCurrentSnippetIdFromUrl,
+        clearUrl: clearUrl
     }
 })();
 

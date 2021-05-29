@@ -70,7 +70,10 @@ var vm = new Vue({
         },
         // check if somebody else's public snippet
         thirdPartySnippetAuthor: function(){
-            return this.model.currentSnippet.uid != this.model.user.uid ? this.model.currentSnippet.author : null;
+            return this.model.currentSnippet?.uid != this.model.user?.uid ? this.model.currentSnippet?.author : null;
+        },
+        allowDisplay: function(){
+            return this.model.currentSnippet?.public || this.model.currentSnippet?.uid == this.model.user?.uid;
         }
 
     },
@@ -83,7 +86,7 @@ var vm = new Vue({
         selectNotebook: function(note){
             if (note && typeof(note.color) === 'undefined')
                 note.color = 'transparent';
-            if (note.id != "searchTmp")
+            if (note && note.id != "searchTmp")
                 this.resetSearch();
             this.model.currentNote = note;
         },
@@ -130,6 +133,11 @@ var vm = new Vue({
                 self.selectNotebook(null);
                 self.state.showModalConfirm = false;
                 self.editNotebook(null);
+                // if deleting parent of currently viewed snippet, clear view
+                if (snippet.id == self.model.currentSnippet?.parent){
+                    self.selectSnippet(null);
+                    glista.clearUrl();
+                }
                 self.feedbackOk('Snippets deleted.');
             })
             .catch(function(error){
@@ -223,7 +231,7 @@ var vm = new Vue({
                 this.$nextTick().then(() => {
                     this.model.currentSnippet = snippet;
                     this.initSnipetViewer(snippet);
-                    if (snippet.id && snippet.uid == this.model.user.uid )
+                    if (snippet.id && this.allowDisplay )
                         glista.setCurrentSnippetUrl(snippet); // dont trigger on create snippet
                 });
             }
@@ -428,22 +436,16 @@ var vm = new Vue({
             console.log('onAuthStateChanged', user);
 
             if (user){
+                // login
                 this.model.user = user;
                 this.loadNotes(user);
             } else {
-                this.model.user = null;
-                // reset
-                this.model.notes = [];
-                this.model.user = null;
-                this.model.currentNote = null;
-                this.model.currentNoteInEditor = null;
-                this.model.currentSnippet = null;
-                this.model.currentSnippetInEditor = null;
-                // clear url
-                const url = new URL(location);
-                url.searchParams.delete('view');
-                history.replaceState(null, null, url);
+                // load public snippet
+                let id = glista.getCurrentSnippetIdFromUrl();
+                if (id)
+                    this.restoreViewFromUrl(id);
             }
+
         },
         loadNotes: function(user){
             let self = this;
@@ -460,6 +462,7 @@ var vm = new Vue({
                     // doc.data() is never undefined for query doc snapshots
                     var note = doc.data();
                     note.id = doc.id;
+                    note.public = !!note.public; // optional value
                     note.order = isNaN(note.order) ? 0 : note.order; // default value
                     items.push(note);
                 });
@@ -486,11 +489,6 @@ var vm = new Vue({
             .get()
             .then((querySnapshot) => {
                 console.log('qs', querySnapshot);
-                // if (querySnapshot.docs && querySnapshot.docs[0]){
-                //     let  note = querySnapshot.docs[0].data();
-                //     note.id = querySnapshot.docs[0].id;
-                //     console.log('note', note);
-                // }
                 if (querySnapshot){
                     let note = querySnapshot.data();
                     note.id = querySnapshot.id;
@@ -546,6 +544,17 @@ var vm = new Vue({
             });
         },
         onSignOut: function(){
+            // logout
+            this.model.user = null;
+            // reset
+            this.model.notes = [];
+            this.model.user = null;
+            this.model.currentNote = null;
+            this.model.currentNoteInEditor = null;
+            this.model.currentSnippet = null;
+            this.model.currentSnippetInEditor = null;
+            glista.clearUrl();
+
             auth.signOut();
         },
         onGoogleSignIn: function(){
