@@ -38,8 +38,6 @@ html, body {
 #notebooks .notebook:hover {color: coral;}
 #notebooks .notebook .count {float:right; font-size:0.8rem;}
 #notebooks .title {margin-left: 0.5rem; margin-bottom: 10px; display: inline-block; color: darkgray; font-weight: bold; font-size: 0.9rem; text-transform: uppercase;  letter-spacing: 0.1rem;}
-#notebooks .foldersTitleContainer:hover span.title_ {color: coral !important;}
-#notebooks .foldersTitleContainer:hover i.icon {color: coral !important;}
 
 #snippets .header {height: 50px; border-bottom: 0px solid lightgray; padding: 10px 15px; background-color: #fff; z-index: 9; position: relative; overflow: hidden;}
 #snippets .header .title { display: block;  /* color: white; */ height: 47px; padding-top: 10px; padding-left: 10px;}
@@ -174,3 +172,13 @@ html, body {
   transition: background-size 0.1s 0s;
 }
 
+#notebooks .foldersTitleContainer:hover span.title_ {color: coral !important;}
+#notebooks .foldersTitleContainer:hover i.icon {color: coral !important;}
+#notebooks .foldersTitleContainer:hover .createFolderAnim {
+	display: inline-block;
+  margin: auto;
+  -webkit-animation: rotateY 2s infinite linear;
+  animation: rotateY 2s infinite linear;
+}
+@-webkit-keyframes rotateY {  to { -webkit-transform: rotateY(360deg); }}
+@keyframes rotateY {  to { transform: rotateY(360deg); }}

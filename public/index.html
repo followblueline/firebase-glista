@@ -103,7 +103,7 @@
                 <div v-if="model.user">
                     <div class="foldersTitleContainer">
                         <span class="title">Folders</span>
-                        <span style="float:right;" v-if="model.user"><i @click="createNotebook()" class="icon icon-plus-squared-alt" style="font-size: 20px;" title="Create folder"></i></span>
+                        <span style="float:right;" v-if="model.user"><i @click="createNotebook()" class="createFolderAnim icon icon-plus-squared-alt" style="font-size: 20px; position: relative; top: -4px" title="Create folder"></i></span>
                     </div>
                     <ul class="list-group notebookList list-group-flush">
                         <li :class="['list-group-item notebook', {selected: note.id == model.currentNote?.id}]" 
