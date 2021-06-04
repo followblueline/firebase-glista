@@ -37,8 +37,8 @@ service cloud.firestore {
     
     match /notes/{docId}{
     	allow write: if request.auth.uid == request.resource.data.uid;
-      allow delete: if request.auth.uid == request.resource.data.uid;
-    	allow read: if request.auth.uid == resource.data.uid;
+        allow delete: if request.auth.uid == request.resource.data.uid;
+    	allow read: if resource.data.public == true || request.auth.uid == resource.data.uid;
     }
     
     match /notes/{parent}{
