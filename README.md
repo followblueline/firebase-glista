@@ -53,3 +53,7 @@ service cloud.firestore {
 Collection ID	Fields indexed	Query scope		Status	
 notes	uid Ascending datecreated Ascending	Collection		Enabled	
 notes	parent Ascending uid Ascending datecreated Ascending	Collection		Enabled	
+
+## Develop
+- firebase serve
+- firebase deploy

@@ -173,12 +173,17 @@ html, body {
 }
 
 #notebooks .foldersTitleContainer:hover span.title_ {color: coral !important;}
-#notebooks .foldersTitleContainer:hover i.icon {color: coral !important;}
+#notebooks .foldersTitleContainer:hover i.icon {color: #ffcc00;}
 #notebooks .foldersTitleContainer:hover .createFolderAnim {
 	display: inline-block;
   margin: auto;
-  -webkit-animation: rotateY 2s infinite linear;
-  animation: rotateY 2s infinite linear;
+  -webkit-animation: rotateY 3s infinite linear;
+  animation: rotateY 3s infinite linear, rotateHueColor 3s infinite;
 }
 @-webkit-keyframes rotateY {  to { -webkit-transform: rotateY(360deg); }}
 @keyframes rotateY {  to { transform: rotateY(360deg); }}
+@keyframes rotateHueColor {
+  from, to { color: lightskyblue; }
+  45%      { color: #80b3e5 }
+  95% { color: lightskyblue; }
+}

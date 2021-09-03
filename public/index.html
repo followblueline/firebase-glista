@@ -18,7 +18,8 @@
 	<script src="/__/firebase/init.js"></script>
     
     <!-- Vue -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script> -->
+    <script src="scripts/vue.js"></script>
 
     <!-- <script src="scripts/arrayToTree.js"></script> -->
     <script src="scripts/utils.js" defer></script>
@@ -42,8 +43,8 @@
     <!-- lets try to simulate our syntax highlighter theme -->
     <link rel="stylesheet" href="scripts/codemirror/highlight_github_sim.css">
     <!--toast notification -->
-    <script src="https://cdn.jsdelivr.net/npm/vue-toast-notification"></script>
-    <link href="https://cdn.jsdelivr.net/npm/vue-toast-notification/dist/theme-sugar.css" rel="stylesheet">
+    <script src="scripts/vue-toast-notification.js"></script>
+    <link href="scripts/theme-sugar.css" rel="stylesheet">
     <!-- markdown converter -->
     <script src="scripts/showdown.min.js"></script>
     <!-- text-to-diagram -->
@@ -250,7 +251,7 @@
                         <template v-else>
                             <template v-if="model.currentSnippet.lang == enums.lang.markdown">
                                 <!-- markdown is not handled through highlightjs-->
-                                <div class="markdown" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
+                                <div class="markdown hljs autodetect" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
                             </template>
                             <template v-else>
                                 <pre><code :class="[getSnippetLang(model.currentSnippet), {'zebraStripes': showZebraStripes(model.currentSnippet) }]">{{model.currentSnippet.content}}</code></pre>
