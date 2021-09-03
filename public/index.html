@@ -251,7 +251,7 @@
                         <template v-else>
                             <template v-if="model.currentSnippet.lang == enums.lang.markdown">
                                 <!-- markdown is not handled through highlightjs-->
-                                <div class="markdown hljs autodetect" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
+                                <div class="markdown" v-html="htmlConverter.makeHtml(model.currentSnippet.content)"></div>
                             </template>
                             <template v-else>
                                 <pre><code :class="[getSnippetLang(model.currentSnippet), {'zebraStripes': showZebraStripes(model.currentSnippet) }]">{{model.currentSnippet.content}}</code></pre>

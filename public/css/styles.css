@@ -154,6 +154,15 @@ html, body {
   }
 }
 
+/* between mobile and desktop two cols and content below */
+@media (min-width: 768px) and (max-width: 991px) {
+  .col-md-2 {
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
 #notebook_edit .color {width:20px; height:20px; margin-right:10px; margin-bottom:10px; float: left; border: 1px solid #bac8d6; cursor:pointer;}
 #notebook_edit .color.selected {border:3px solid #000;}
 
